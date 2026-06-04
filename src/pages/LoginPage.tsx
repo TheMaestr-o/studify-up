@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { GoogleLogin } from '@react-oauth/google'
+import { Layers, Brain, Volume2, Smartphone, GraduationCap, Infinity } from 'lucide-react'
 import styles from './LoginPage.module.css'
 
 function decodeJwt(token: string) {
@@ -14,12 +15,12 @@ interface GoogleUser {
 }
 
 const FEATURES = [
-  { icon: '🃏', text: '6 study modes — Flashcards, Match, Learn, Test, Blocks, Blast' },
-  { icon: '🧠', text: 'Spaced repetition (FSRS) — remember words long-term' },
-  { icon: '🔊', text: 'Audio pronunciation on every card' },
-  { icon: '📱', text: 'Study on web or Telegram — progress syncs automatically' },
-  { icon: '👨‍🏫', text: 'Teacher assigns words directly to your account' },
-  { icon: '🆓', text: 'Everything free — no paywalls, no limits' },
+  { Icon: Layers,       text: '6 study modes — Flashcards, Match, Learn, Test, Blocks, Blast' },
+  { Icon: Brain,        text: 'Spaced repetition (FSRS) — remember words long-term' },
+  { Icon: Volume2,      text: 'Audio pronunciation on every card' },
+  { Icon: Smartphone,   text: 'Study on web or Telegram — progress syncs automatically' },
+  { Icon: GraduationCap,text: 'Teacher assigns words directly to your account' },
+  { Icon: Infinity,     text: 'Everything free — no paywalls, no limits' },
 ]
 
 export function LoginPage() {
@@ -57,10 +58,10 @@ export function LoginPage() {
             Used by students and teachers worldwide.
           </p>
           <ul className={styles.features}>
-            {FEATURES.map(f => (
-              <li key={f.text} className={styles.feature}>
-                <span className={styles.featureIcon}>{f.icon}</span>
-                <span>{f.text}</span>
+            {FEATURES.map(({ Icon, text }) => (
+              <li key={text} className={styles.feature}>
+                <span className={styles.featureIcon}><Icon size={17} strokeWidth={1.8} /></span>
+                <span>{text}</span>
               </li>
             ))}
           </ul>

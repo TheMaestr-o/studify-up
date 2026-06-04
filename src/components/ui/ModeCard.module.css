@@ -13,4 +13,4 @@
   font-size: 15px; flex-shrink: 0;
 }
 .label { flex: 1; text-align: left; }
-.lock { position: absolute; right: 12px; font-size: 12px; opacity: 0.6; }
+.lock { position: absolute; right: 12px; opacity: 0.5; color: var(--text-muted); }

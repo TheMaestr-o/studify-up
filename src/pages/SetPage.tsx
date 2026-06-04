@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle } from 'lucide-react'
 import { useWords } from '../hooks/useWords'
 import { fetchSetMeta } from '../api/client'
 import { ModeCard } from '../components/ui/ModeCard'
@@ -8,12 +9,12 @@ import { Skeleton } from '../components/ui/Skeleton'
 import styles from './SetPage.module.css'
 
 const MODES = [
-  { id: 'flashcards', icon: '🃏', label: 'Flashcards', color: 'var(--mode-flashcards)' },
-  { id: 'learn',      icon: '🔄', label: 'Learn',      color: 'var(--mode-learn)' },
-  { id: 'test',       icon: '📝', label: 'Test',       color: 'var(--mode-test)' },
-  { id: 'blocks',     icon: '⊞',  label: 'Blocks',     color: 'var(--mode-blocks)' },
-  { id: 'blast',      icon: '🚀', label: 'Blast',      color: 'var(--mode-blast)' },
-  { id: 'match',      icon: '🔀', label: 'Match',      color: 'var(--mode-match)' },
+  { id: 'flashcards', icon: <Layers size={15} strokeWidth={2} />,       label: 'Flashcards', color: 'var(--mode-flashcards)' },
+  { id: 'learn',      icon: <RefreshCw size={15} strokeWidth={2} />,    label: 'Learn',      color: 'var(--mode-learn)' },
+  { id: 'test',       icon: <ClipboardList size={15} strokeWidth={2} />,label: 'Test',       color: 'var(--mode-test)' },
+  { id: 'blocks',     icon: <Grid3x3 size={15} strokeWidth={2} />,      label: 'Blocks',     color: 'var(--mode-blocks)' },
+  { id: 'blast',      icon: <Zap size={15} strokeWidth={2} />,          label: 'Blast',      color: 'var(--mode-blast)' },
+  { id: 'match',      icon: <Shuffle size={15} strokeWidth={2} />,      label: 'Match',      color: 'var(--mode-match)' },
 ] as const
 
 export function SetPage() {
