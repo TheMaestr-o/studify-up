@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { Shuffle, Trophy } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import styles from './Match.module.css'
 import type { MatchCard } from '../../types'
@@ -44,6 +45,14 @@ export function Match() {
     setBatch(0); setTimeMs(0); setPhase('playing')
     startBatch(0, words)
   }, [words, startBatch])
+
+  // Stop timer whenever phase leaves 'playing'
+  useEffect(() => {
+    if (phase !== 'playing' && timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+  }, [phase])
 
   useEffect(() => () => {
     if (timerRef.current) clearInterval(timerRef.current)
@@ -105,7 +114,7 @@ export function Match() {
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
         ← Back to set
       </button>
-      <div className={styles.bigIcon}>🔀</div>
+      <Shuffle size={48} strokeWidth={1.4} color="var(--accent)" />
       <h2>Ready?</h2>
       <p>Match all terms and definitions as fast as you can. Wrong matches add 1 second.</p>
       <button className={styles.startBtn} onClick={startGame}>Start game</button>
@@ -114,7 +123,7 @@ export function Match() {
 
   if (phase === 'done') return (
     <div className={styles.center}>
-      <div className={styles.bigIcon}>🎉</div>
+      <Trophy size={48} strokeWidth={1.4} color="var(--mastered)" />
       <h2>Done!</h2>
       <div className={styles.time}>{sec}s</div>
       {bestMs && <div className={styles.best}>Best: {(bestMs / 1000).toFixed(1)}s</div>}
