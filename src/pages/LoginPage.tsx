@@ -112,8 +112,9 @@ export function LoginPage() {
                 width="280"
               />
               <p className={styles.hint}>Free forever · No credit card needed</p>
+              <div className={styles.dividerOr}><span>or</span></div>
               <button className={styles.noGoogleBtn} onClick={() => setGoogleFailed(true)}>
-                Continue without Google
+                <User size={15} strokeWidth={2} /> Continue with Student ID
               </button>
             </div>
           ) : (

@@ -10,14 +10,21 @@
   overflow: hidden;
 }
 
-/* Subtle background glow */
+/* Premium background */
 .screen::before {
   content: '';
   position: absolute;
-  top: -200px; left: 50%;
-  transform: translateX(-50%);
-  width: 800px; height: 600px;
-  background: radial-gradient(ellipse at center, rgba(66,85,255,0.12) 0%, transparent 70%);
+  top: -300px; left: 30%;
+  width: 700px; height: 700px;
+  background: radial-gradient(ellipse, rgba(66,85,255,0.18) 0%, transparent 65%);
+  pointer-events: none;
+}
+.screen::after {
+  content: '';
+  position: absolute;
+  bottom: -200px; right: 20%;
+  width: 500px; height: 500px;
+  background: radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 65%);
   pointer-events: none;
 }
 
@@ -50,12 +57,15 @@
 }
 
 .heroTitle {
-  font-size: 52px;
+  font-size: 54px;
   font-weight: 800;
   line-height: 1.1;
-  color: var(--text);
   margin: 0 0 20px;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
+  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .heroSub {
@@ -93,27 +103,29 @@
 
 /* ── Right card ── */
 .card {
-  background: var(--bg-card);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 24px;
+  background: rgba(30, 36, 64, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 28px;
   padding: 44px 40px;
-  width: 360px;
+  width: 370px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 0 0 1px rgba(66,85,255,0.15), var(--shadow-lg);
+  box-shadow: 0 0 0 1px rgba(66,85,255,0.2), 0 32px 64px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
 .logo {
   width: 64px; height: 64px;
-  background: var(--accent);
+  background: linear-gradient(135deg, #4255FF 0%, #6366F1 100%);
   border-radius: var(--r-xl);
   font-size: 30px; font-weight: 800;
   color: #fff;
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 18px;
-  box-shadow: 0 8px 24px rgba(66,85,255,0.4);
+  box-shadow: 0 8px 32px rgba(66,85,255,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .cardTitle {
@@ -158,15 +170,32 @@
   margin-top: 16px;
 }
 
-.noGoogleBtn {
-  margin-top: 14px;
-  background: none; border: none;
-  color: var(--text-muted); font-size: 13px;
-  cursor: pointer;
-  transition: color 0.15s;
-  padding: 4px 0;
+.dividerOr {
+  width: 100%; display: flex; align-items: center; gap: 12px;
+  margin: 16px 0 0;
 }
-.noGoogleBtn:hover { color: var(--text); }
+.dividerOr::before, .dividerOr::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.dividerOr span { font-size: 12px; color: var(--text-dim); }
+
+.noGoogleBtn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 13px;
+  border: 1px solid rgba(35,178,109,0.35);
+  border-radius: var(--r-pill);
+  background: rgba(35,178,109,0.08);
+  color: #34d399;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.noGoogleBtn:hover {
+  background: rgba(35,178,109,0.15);
+  border-color: rgba(35,178,109,0.5);
+}
 
 /* ── Step 2: Student ID ── */
 .step2 {
