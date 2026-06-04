@@ -2,6 +2,13 @@
 .loading { color: var(--text-muted); padding: 40px; }
 .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 4px; }
 .title { font-size: 28px; font-weight: 700; text-transform: capitalize; }
+.titleSkeleton {
+  display: block; width: 220px; height: 28px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.12) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 400% 100%; border-radius: var(--r-sm);
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer { 0% { background-position: 100% 0 } 100% { background-position: -100% 0 } }
 .actions { display: flex; gap: 8px; flex-shrink: 0; }
 .actionBtn {
   background: rgba(255,255,255,0.06); border: 1px solid var(--border-light);

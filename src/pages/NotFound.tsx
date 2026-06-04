@@ -1,0 +1,27 @@
+import { useNavigate } from 'react-router-dom'
+
+export function NotFound() {
+  const navigate = useNavigate()
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      justifyContent: 'center', minHeight: '60vh', gap: 16, textAlign: 'center'
+    }}>
+      <div style={{ fontSize: 64 }}>🔍</div>
+      <h1 style={{ fontSize: 32, fontWeight: 700 }}>Page not found</h1>
+      <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16 }}>
+        This page doesn't exist or the link has expired.
+      </p>
+      <button
+        onClick={() => navigate('/')}
+        style={{
+          background: '#4255FF', color: '#fff', border: 'none',
+          borderRadius: 24, padding: '12px 28px', fontSize: 15,
+          fontWeight: 600, cursor: 'pointer', marginTop: 8
+        }}
+      >
+        ← Back home
+      </button>
+    </div>
+  )
+}

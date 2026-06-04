@@ -1,6 +1,30 @@
 .page { animation: fadeIn 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.title { font-size: 28px; font-weight: 700; margin-bottom: 24px; }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.title { font-size: 28px; font-weight: 700; }
+
+.signOut {
+  font-size: 13px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--r-md);
+  transition: color 0.15s, background 0.15s;
+}
+.signOut:hover {
+  color: var(--text);
+  background: var(--border);
+}
+
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
 .card {
   background: var(--bg-card); border-radius: var(--r-md); padding: 20px;
@@ -14,11 +38,8 @@
   background: rgba(66,85,255,0.2); color: var(--accent);
   padding: 2px 8px; border-radius: var(--r-xs);
 }
-.empty, .loading {
+.loading {
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; min-height: 40vh; gap: 12px;
   color: var(--text-muted); text-align: center;
 }
-.empty h2 { font-size: 24px; color: var(--text); }
-.hint { font-size: 12px; }
-.hint code { background: var(--bg-card); padding: 2px 6px; border-radius: var(--r-xs); }

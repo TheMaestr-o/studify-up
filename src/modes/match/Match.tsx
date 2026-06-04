@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useWords } from '../../hooks/useWords'
 import styles from './Match.module.css'
 import type { MatchCard } from '../../types'
@@ -22,6 +22,7 @@ function makeBatch(words: { id: string; word_en: string; word_uk: string | null 
 
 export function Match() {
   const { setId } = useParams<{ setId: string }>()
+  const navigate = useNavigate()
   const { words, loading } = useWords(setId ?? null)
   const [phase, setPhase] = useState<'start' | 'playing' | 'done'>('start')
   const [batch, setBatch] = useState(0)
@@ -82,6 +83,9 @@ export function Match() {
 
   if (phase === 'start') return (
     <div className={styles.center}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back to set
+      </button>
       <div className={styles.bigIcon}>🔀</div>
       <h2>Ready?</h2>
       <p>Match all terms and definitions as fast as you can. Wrong matches add 1 second.</p>
@@ -101,6 +105,9 @@ export function Match() {
 
   return (
     <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back to set
+      </button>
       <div className={styles.header}>
         <span className={styles.timer}>{sec}s</span>
         <span className={styles.round}>Round {batch + 1} / {totalBatches}</span>

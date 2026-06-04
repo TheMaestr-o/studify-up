@@ -1,6 +1,8 @@
-import { Routes, Route } from 'react-router-dom'
+import { Navigate, Routes, Route } from 'react-router-dom'
 import { Layout } from './components/layout/Layout'
+import { LoginPage } from './pages/LoginPage'
 import { HomePage } from './pages/HomePage'
+import { NotFound } from './pages/NotFound'
 import { SetPage } from './pages/SetPage'
 import { Flashcards } from './modes/flashcards/Flashcards'
 import { Match } from './modes/match/Match'
@@ -9,10 +11,26 @@ import { Test } from './modes/test/Test'
 import { Blocks } from './modes/blocks/Blocks'
 import { Blast } from './modes/blast/Blast'
 
+function RequireAuth({ children }: { children: React.ReactNode }) {
+  const userId = localStorage.getItem('userId')
+  const googleUser = localStorage.getItem('googleUser')
+  if (!userId || !googleUser) {
+    return <Navigate to="/login" replace />
+  }
+  return <>{children}</>
+}
+
 export default function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        element={
+          <RequireAuth>
+            <Layout />
+          </RequireAuth>
+        }
+      >
         <Route path="/" element={<HomePage />} />
         <Route path="/set/:setId" element={<SetPage />} />
         <Route path="/set/:setId/flashcards" element={<Flashcards />} />
@@ -21,6 +39,7 @@ export default function App() {
         <Route path="/set/:setId/test" element={<Test />} />
         <Route path="/set/:setId/blocks" element={<Blocks />} />
         <Route path="/set/:setId/blast" element={<Blast />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   )

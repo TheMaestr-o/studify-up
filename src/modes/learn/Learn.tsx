@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useWords } from '../../hooks/useWords'
 import styles from './Learn.module.css'
 import type { MasteryLevel } from '../../types'
+import { saveReview } from '../../api/client'
 
 function levenshtein(a: string, b: string): number {
   const dp = Array.from({ length: a.length + 1 }, (_, i) =>
@@ -23,6 +24,7 @@ function isAccepted(input: string, correct: string): boolean {
 
 export function Learn() {
   const { setId } = useParams<{ setId: string }>()
+  const navigate = useNavigate()
   const { words, loading } = useWords(setId ?? null)
   const [mastery, setMastery] = useState<Record<string, { level: MasteryLevel; streak: number }>>({})
   const [qType, setQType] = useState<'mc' | 'written'>('mc')
@@ -36,7 +38,10 @@ export function Learn() {
     [words, mastery, tick]
   )
 
-  const word = unmastered[0] ?? null
+  const word = useMemo(() => {
+    if (!unmastered.length) return null
+    return unmastered[Math.floor(Math.random() * unmastered.length)]!
+  }, [unmastered, tick])
 
   const opts = useMemo(() => {
     if (!word) return []
@@ -53,6 +58,10 @@ export function Learn() {
     const correct = word.word_uk ?? word.word_en
     const ok = qType === 'mc' ? answer === correct : isAccepted(answer, correct)
     const prev = mastery[word.id] ?? { level: 'not_studied' as MasteryLevel, streak: 0 }
+    const userId = localStorage.getItem('userId')
+    if (userId) {
+      saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: ok, responseTimeMs: 500 })
+    }
     if (ok) {
       const streak = prev.streak + 1
       const level: MasteryLevel = streak >= 2 ? 'mastered' : 'familiar'
@@ -81,6 +90,9 @@ export function Learn() {
 
   return (
     <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back to set
+      </button>
       <div className={styles.progress}>
         <span>{masteredCount} / {words.length} mastered</span>
         <div className={styles.bar}><div className={styles.fill} style={{ width: `${(masteredCount / words.length) * 100}%` }} /></div>

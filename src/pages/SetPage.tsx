@@ -1,12 +1,15 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useWords } from '../hooks/useWords'
+import { fetchSetMeta } from '../api/client'
 import { ModeCard } from '../components/ui/ModeCard'
+import { Toast } from '../components/ui/Toast'
 import styles from './SetPage.module.css'
 
 const MODES = [
   { id: 'flashcards', icon: '🃏', label: 'Flashcards', color: 'var(--mode-flashcards)' },
   { id: 'learn',      icon: '🔄', label: 'Learn',      color: 'var(--mode-learn)' },
-  { id: 'test',       icon: '📝', label: 'Test',       color: 'var(--mode-test)',    locked: true },
+  { id: 'test',       icon: '📝', label: 'Test',       color: 'var(--mode-test)' },
   { id: 'blocks',     icon: '⊞',  label: 'Blocks',     color: 'var(--mode-blocks)' },
   { id: 'blast',      icon: '🚀', label: 'Blast',      color: 'var(--mode-blast)' },
   { id: 'match',      icon: '🔀', label: 'Match',      color: 'var(--mode-match)' },
@@ -16,13 +19,32 @@ export function SetPage() {
   const { setId } = useParams<{ setId: string }>()
   const navigate = useNavigate()
   const { words, loading } = useWords(setId ?? null)
+  const [setName, setSetName] = useState<string | null>(null)
+  const [metaLoading, setMetaLoading] = useState(false)
+
+  useEffect(() => {
+    if (!setId) return
+    setMetaLoading(true)
+    fetchSetMeta(setId)
+      .then(meta => setSetName(meta.name))
+      .catch(() => setSetName(null))
+      .finally(() => setMetaLoading(false))
+  }, [setId])
 
   if (loading) return <div className={styles.loading}>Loading…</div>
+
+  const displayTitle = metaLoading
+    ? null
+    : (setName ?? setId?.replace(/^vs-/, '').replace(/-/g, ' ') ?? '')
 
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>{setId?.replace(/^vs-/, '').replace(/-/g, ' ')}</h1>
+        <h1 className={styles.title}>
+          {displayTitle === null
+            ? <span className={styles.titleSkeleton} />
+            : displayTitle}
+        </h1>
         <div className={styles.actions}>
           <button className={styles.actionBtn}>🔖 Save</button>
           <button className={styles.actionBtn}>📊 Groups</button>
@@ -39,8 +61,8 @@ export function SetPage() {
             icon={m.icon}
             label={m.label}
             color={m.color}
-            locked={'locked' in m}
-            onClick={() => !('locked' in m) && navigate(`/set/${setId}/${m.id}`)}
+            locked={false}
+            onClick={() => navigate(`/set/${setId}/${m.id}`)}
           />
         ))}
       </div>

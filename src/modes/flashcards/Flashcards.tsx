@@ -1,10 +1,12 @@
 import { useState, useCallback, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useWords } from '../../hooks/useWords'
 import styles from './Flashcards.module.css'
+import { saveReview } from '../../api/client'
 
 export function Flashcards() {
   const { setId } = useParams<{ setId: string }>()
+  const navigate = useNavigate()
   const { words, loading } = useWords(setId ?? null)
   const [index, setIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
@@ -32,6 +34,9 @@ export function Flashcards() {
 
   return (
     <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back to set
+      </button>
       <div className={styles.progress}>
         <div className={styles.bar}>
           <div className={styles.barMastered} style={{ width: `${(known.size / total) * 100}%` }} />
@@ -57,12 +62,20 @@ export function Flashcards() {
       </div>
 
       <div className={styles.actions}>
-        <button className={styles.btnLearning} onClick={() => { setLearning(s => new Set([...s, word.id])); setKnown(k => { const n = new Set(k); n.delete(word.id); return n }); next() }}>↩ Still Learning</button>
+        <button className={styles.btnLearning} onClick={() => {
+          const userId = localStorage.getItem('userId')
+          if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: false, responseTimeMs: 500 })
+          setLearning(s => new Set([...s, word.id])); setKnown(k => { const n = new Set(k); n.delete(word.id); return n }); next()
+        }}>↩ Still Learning</button>
         <div className={styles.nav}>
           <button className={styles.navBtn} onClick={prev}>‹</button>
           <button className={styles.navBtn} onClick={next}>›</button>
         </div>
-        <button className={styles.btnKnow} onClick={() => { setKnown(k => new Set([...k, word.id])); setLearning(s => { const n = new Set(s); n.delete(word.id); return n }); next() }}>Know it ✓</button>
+        <button className={styles.btnKnow} onClick={() => {
+          const userId = localStorage.getItem('userId')
+          if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: true, responseTimeMs: 500 })
+          setKnown(k => new Set([...k, word.id])); setLearning(s => { const n = new Set(s); n.delete(word.id); return n }); next()
+        }}>Know it ✓</button>
       </div>
     </div>
   )
