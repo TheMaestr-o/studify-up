@@ -25,12 +25,41 @@ export function HomePage() {
     </div>
   )
 
+  const noSets = !loading && sets.length === 0
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <h1 className={styles.title}>Your Sets</h1>
         <button className={styles.signOut} onClick={handleSignOut}>Sign out</button>
       </div>
+
+      {noSets && (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>📚</div>
+          <h2>No sets yet</h2>
+          <p>Your teacher hasn't assigned any words to your account yet.</p>
+          <p className={styles.emptyHint}>
+            Share your Student ID with your teacher:<br />
+            <strong className={styles.userId}>{localStorage.getItem('userId') !== '0' ? localStorage.getItem('userId') : 'Link your Student ID in settings'}</strong>
+          </p>
+          {localStorage.getItem('userId') === '0' && (
+            <button
+              className={styles.linkBtn}
+              onClick={() => {
+                const id = prompt('Enter your Student ID:')
+                if (id?.trim()) {
+                  localStorage.setItem('userId', id.trim())
+                  window.location.reload()
+                }
+              }}
+            >
+              + Link Student ID
+            </button>
+          )}
+        </div>
+      )}
+
       <div className={styles.grid}>
         {sets.map(set => (
           <a key={set.id} href={`/set/${set.id}`} className={styles.card}>

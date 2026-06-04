@@ -43,3 +43,24 @@
   justify-content: center; min-height: 40vh; gap: 12px;
   color: var(--text-muted); text-align: center;
 }
+
+.emptyState {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 60px 24px; gap: 12px;
+}
+.emptyIcon { font-size: 48px; margin-bottom: 4px; }
+.emptyState h2 { font-size: 22px; font-weight: 700; }
+.emptyState p { font-size: 15px; color: var(--text-muted); max-width: 360px; line-height: 1.5; }
+.emptyHint { margin-top: 8px; }
+.userId {
+  display: inline-block; margin-top: 6px;
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: var(--r-sm); padding: 4px 12px;
+  font-family: var(--font-mono, monospace); font-size: 16px; color: var(--text);
+}
+.linkBtn {
+  margin-top: 8px; background: var(--accent); color: #fff;
+  border: none; border-radius: var(--r-pill); padding: 10px 24px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.linkBtn:hover { background: var(--accent-hover); }

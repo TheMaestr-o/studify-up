@@ -221,6 +221,19 @@
 .linkButton:hover { background: var(--accent-hover); }
 .linkButton:active { transform: scale(0.98); }
 
+.skipButton {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.skipButton:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }

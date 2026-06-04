@@ -111,6 +111,17 @@ export function LoginPage() {
                 autoFocus
               />
               <button className={styles.linkButton} type="submit">Start studying →</button>
+              <button
+                type="button"
+                className={styles.skipButton}
+                onClick={() => {
+                  localStorage.setItem('googleUser', JSON.stringify(googleUser))
+                  localStorage.setItem('userId', '0')
+                  window.location.href = '/'
+                }}
+              >
+                Skip for now — explore the app
+              </button>
             </form>
           )}
         </div>
