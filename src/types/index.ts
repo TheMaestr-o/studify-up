@@ -62,4 +62,5 @@ export interface MatchCard {
   isMatched: boolean
   isSelected: boolean
   isWrong: boolean
+  isGone?: boolean
 }

@@ -1,4 +1,5 @@
 import { useSets } from '../hooks/useSets'
+import { Skeleton } from '../components/ui/Skeleton'
 import styles from './HomePage.module.css'
 
 export function HomePage() {
@@ -11,7 +12,18 @@ export function HomePage() {
     window.location.href = '/login'
   }
 
-  if (loading) return <div className={styles.loading}>Loading sets…</div>
+  if (loading) return (
+    <div className={styles.page}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Your Sets</h1>
+      </div>
+      <div className={styles.grid}>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} height="100px" borderRadius="10px" />
+        ))}
+      </div>
+    </div>
+  )
 
   return (
     <div className={styles.page}>

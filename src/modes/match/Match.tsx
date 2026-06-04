@@ -53,7 +53,11 @@ export function Match() {
       if (!selected) { setSelected(cardId); return prev.map(c => ({ ...c, isSelected: c.id === cardId })) }
       const sel = prev.find(c => c.id === selected)!
       if (card.wordId === sel.wordId && card.type !== sel.type) {
-        const next = prev.map(c => c.wordId === card.wordId ? { ...c, isMatched: true, isSelected: false } : c)
+        const matchedWordId = card.wordId
+        const next = prev.map(c => c.wordId === matchedWordId ? { ...c, isMatched: true, isSelected: false } : c)
+        setTimeout(() => {
+          setCards(p => p.map(c => c.wordId === matchedWordId ? { ...c, isGone: true } : c))
+        }, 300)
         setSelected(null)
         if (next.every(c => c.isMatched)) {
           if (timerRef.current) clearInterval(timerRef.current)
@@ -116,7 +120,7 @@ export function Match() {
         {cards.map(c => (
           <button
             key={c.id}
-            className={`${styles.tile} ${c.isSelected ? styles.sel : ''} ${c.isMatched ? styles.matched : ''} ${c.isWrong ? styles.wrong : ''}`}
+            className={`${styles.tile} ${c.isSelected ? styles.sel : ''} ${c.isMatched ? styles.matched : ''} ${c.isGone ? styles.gone : ''} ${c.isWrong ? styles.wrong : ''}`}
             onClick={() => tapCard(c.id)}
             disabled={c.isMatched}
           >{c.text}</button>
