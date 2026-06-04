@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Shuffle, Trophy } from 'lucide-react'
+import { Shuffle, Trophy, ChevronLeft } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import styles from './Match.module.css'
 import type { MatchCard } from '../../types'
@@ -97,7 +97,7 @@ export function Match() {
   if (error) return (
     <div className={styles.center}>
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
-        ← Back
+        <ChevronLeft size={14} strokeWidth={2} /> Back
       </button>
       <div style={{ textAlign: 'center', padding: '80px 24px' }}>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Failed to load words.</p>
@@ -112,7 +112,7 @@ export function Match() {
   if (phase === 'start') return (
     <div className={styles.center}>
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
-        ← Back to set
+        <ChevronLeft size={14} strokeWidth={2} /> Back to set
       </button>
       <Shuffle size={48} strokeWidth={1.4} color="var(--accent)" />
       <h2>Ready?</h2>
@@ -134,7 +134,7 @@ export function Match() {
   return (
     <div className={styles.page}>
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
-        ← Back to set
+        <ChevronLeft size={14} strokeWidth={2} /> Back to set
       </button>
       <div className={styles.header}>
         <span className={styles.timer}>{sec}s</span>

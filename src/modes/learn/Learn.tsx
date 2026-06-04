@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { ChevronLeft, ChevronRight, Volume2, Trophy } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import styles from './Learn.module.css'
 import type { MasteryLevel } from '../../types'
@@ -88,7 +89,7 @@ export function Learn() {
   if (error) return (
     <div className={styles.page}>
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
-        ← Back
+        <ChevronLeft size={14} strokeWidth={2} /> Back
       </button>
       <div style={{ textAlign: 'center', padding: '80px 24px' }}>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Failed to load words.</p>
@@ -100,7 +101,7 @@ export function Learn() {
   if (!words.length) return (
     <div className={styles.page}>
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
-        ← Back to set
+        <ChevronLeft size={14} strokeWidth={2} /> Back to set
       </button>
       <div style={{ textAlign: 'center', padding: '80px 24px', color: 'rgba(255,255,255,0.4)' }}>
         <p style={{ fontSize: 16 }}>No words in this set yet.</p>
@@ -111,7 +112,7 @@ export function Learn() {
 
   if (unmastered.length === 0) return (
     <div className={styles.done}>
-      <div>🎉</div>
+      <Trophy size={52} strokeWidth={1.3} color="var(--mastered)" />
       <h2>All {words.length} words mastered!</h2>
       <button className={styles.btn} onClick={() => { setMastery({}); setTick(0) }}>Study again</button>
     </div>
@@ -120,7 +121,7 @@ export function Learn() {
   return (
     <div className={styles.page}>
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
-        ← Back to set
+        <ChevronLeft size={14} strokeWidth={2} /> Back to set
       </button>
       <div className={styles.progress}>
         <span>{masteredCount} / {words.length} mastered</span>
@@ -133,7 +134,7 @@ export function Learn() {
             <button
               className={styles.audio}
               onClick={() => new Audio(word.audio_url!).play()}
-            >🔊</button>
+            ><Volume2 size={16} strokeWidth={2} /></button>
           )}
           {qType === 'mc' ? (
             <div className={styles.options}>
@@ -159,7 +160,7 @@ export function Learn() {
                 <>
                   <div className={styles.wrongMsg}>Correct: <strong>{wrongAnswer}</strong></div>
                   <button className={styles.override} onClick={() => { setMastery(m => ({ ...m, [word.id]: { level: 'familiar', streak: 1 } })); setFeedback(null); setInput(''); setTick(t => t + 1) }}>Override: I was right</button>
-                  <button className={styles.next} onClick={() => { setFeedback(null); setInput(''); setTick(t => t + 1) }}>Next →</button>
+                  <button className={styles.next} onClick={() => { setFeedback(null); setInput(''); setTick(t => t + 1) }}>Next <ChevronRight size={14} strokeWidth={2} /></button>
                 </>
               )}
             </div>

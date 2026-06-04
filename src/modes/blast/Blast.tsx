@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { ChevronLeft } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import styles from './Blast.module.css'
 import type { Word } from '../../types'
@@ -528,7 +529,7 @@ export function Blast() {
         padding: 0,
       }}
     >
-      ← Back to set
+      <ChevronLeft size={14} strokeWidth={2} /> Back to set
     </button>
   )
 

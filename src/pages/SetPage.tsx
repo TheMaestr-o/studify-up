@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle, Share2, Volume2, Star, Pin } from 'lucide-react'
+import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle, Share2, Volume2, Star, Pin, ChevronRight } from 'lucide-react'
 import { useWords } from '../hooks/useWords'
 import { fetchSetMeta } from '../api/client'
 import { playWord } from '../utils/audio'
@@ -99,7 +99,7 @@ export function SetPage() {
       {!isLoggedIn && (
         <div className={styles.guestBanner}>
           <span>Sign in to track progress, study with all 6 modes, and sync with Telegram</span>
-          <a href="/login" className={styles.guestCta}>Sign in free →</a>
+          <a href="/login" className={styles.guestCta}>Sign in free <ChevronRight size={13} strokeWidth={2} style={{ verticalAlign: 'middle' }} /></a>
         </div>
       )}
 

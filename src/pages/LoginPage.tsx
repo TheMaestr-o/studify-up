@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { GoogleLogin } from '@react-oauth/google'
-import { Layers, Brain, Volume2, Smartphone, GraduationCap, Infinity } from 'lucide-react'
+import { Layers, Brain, Volume2, Smartphone, GraduationCap, Infinity, ChevronRight } from 'lucide-react'
 import styles from './LoginPage.module.css'
 
 function decodeJwt(token: string) {
@@ -110,7 +110,7 @@ export function LoginPage() {
                 onChange={e => setStudentId(e.target.value)}
                 autoFocus
               />
-              <button className={styles.linkButton} type="submit">Start studying →</button>
+              <button className={styles.linkButton} type="submit">Start studying <ChevronRight size={14} strokeWidth={2} /></button>
               <button
                 type="button"
                 className={styles.skipButton}

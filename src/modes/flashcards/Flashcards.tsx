@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Volume2, VolumeX, Trophy } from 'lucide-react'
+import { Volume2, VolumeX, Trophy, CornerDownLeft, Check, ChevronLeft } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import styles from './Flashcards.module.css'
 import { saveReview } from '../../api/client'
@@ -75,7 +75,7 @@ export function Flashcards() {
 
   const backBtn = (
     <button onClick={() => navigate(`/set/${setId}`)} className={styles.backBtn}>
-      ← Back to set
+      <ChevronLeft size={14} strokeWidth={2} /> Back to set
     </button>
   )
 
@@ -171,7 +171,7 @@ export function Flashcards() {
           const userId = localStorage.getItem('userId')
           if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: false, responseTimeMs: Date.now() - cardStartRef.current })
           setLearning(s => new Set([...s, word.id])); setKnown(k => { const n = new Set(k); n.delete(word.id); return n }); next()
-        }}>↩ Still Learning</button>
+        }}><CornerDownLeft size={14} strokeWidth={2} style={{ verticalAlign: 'middle', marginRight: 4 }} />Still Learning</button>
         <div className={styles.nav}>
           <button className={styles.navBtn} onClick={prev}>‹</button>
           <button className={styles.navBtn} onClick={next}>›</button>
@@ -180,7 +180,7 @@ export function Flashcards() {
           const userId = localStorage.getItem('userId')
           if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: true, responseTimeMs: Date.now() - cardStartRef.current })
           setKnown(k => new Set([...k, word.id])); setLearning(s => { const n = new Set(s); n.delete(word.id); return n }); next()
-        }}>Know it ✓</button>
+        }}>Know it <Check size={14} strokeWidth={2.5} style={{ verticalAlign: 'middle', marginLeft: 2 }} /></button>
       </div>
     </div>
   )

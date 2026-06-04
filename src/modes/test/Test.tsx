@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { ChevronLeft, ChevronRight, Trophy, ThumbsUp, BookOpen, Check, X } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import styles from './Test.module.css'
 import type { Word } from '../../types'
@@ -104,7 +105,7 @@ export function Test() {
   if (error) return (
     <div className={styles.page}>
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
-        ← Back
+        <ChevronLeft size={14} strokeWidth={2} /> Back
       </button>
       <div style={{ textAlign: 'center', padding: '80px 24px' }}>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Failed to load words.</p>
@@ -116,7 +117,7 @@ export function Test() {
   if (!words.length) return (
     <div className={styles.page}>
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
-        ← Back to set
+        <ChevronLeft size={14} strokeWidth={2} /> Back to set
       </button>
       <div style={{ textAlign: 'center', padding: '80px 24px', color: 'rgba(255,255,255,0.4)' }}>
         <p style={{ fontSize: 16 }}>No words in this set yet.</p>
@@ -134,7 +135,7 @@ export function Test() {
     return (
       <div className={styles.page}>
         <button onClick={() => navigate(`/set/${setId}`)} className={styles.backBtn}>
-          ← Back to set
+          <ChevronLeft size={14} strokeWidth={2} /> Back to set
         </button>
         <div className={styles.setupCard}>
           <h2 className={styles.setupTitle}>Configure your test</h2>
@@ -161,7 +162,7 @@ export function Test() {
             </div>
           </div>
           <button className={styles.startBtn} onClick={handleStartTest}>
-            Start test →
+            Start test <ChevronRight size={14} strokeWidth={2} />
           </button>
         </div>
       </div>
@@ -174,14 +175,14 @@ export function Test() {
     const pct = Math.round((score / questions.length) * 100)
     return (
       <div className={styles.results}>
-        <div className={styles.resultEmoji}>{pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '📖'}</div>
+        <div className={styles.resultEmoji}>{pct >= 80 ? <Trophy size={52} strokeWidth={1.3} color="var(--mastered)" /> : pct >= 50 ? <ThumbsUp size={52} strokeWidth={1.3} color="var(--accent)" /> : <BookOpen size={52} strokeWidth={1.3} color="rgba(255,255,255,0.5)" />}</div>
         <h2 className={styles.resultTitle}>Test complete!</h2>
         <div className={styles.score}>{score} / {questions.length} correct ({pct}%)</div>
         <div className={styles.breakdown}>
           {questions.map((question, i) => (
             <div key={question.word.id} className={`${styles.breakdownRow} ${answers[i] ? styles.bCorrect : styles.bWrong}`}>
               <span className={styles.bWord}>{question.word.word_en}</span>
-              <span className={styles.bAnswer}>{answers[i] ? '✓' : '✗'} {question.correct}</span>
+              <span className={styles.bAnswer}>{answers[i] ? <Check size={13} strokeWidth={2.5} style={{ verticalAlign: 'middle', marginRight: 3 }} /> : <X size={13} strokeWidth={2.5} style={{ verticalAlign: 'middle', marginRight: 3 }} />}{question.correct}</span>
             </div>
           ))}
         </div>
@@ -195,7 +196,7 @@ export function Test() {
   return (
     <div className={styles.page}>
       <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
-        ← Back to set
+        <ChevronLeft size={14} strokeWidth={2} /> Back to set
       </button>
       <div className={styles.progress}>
         <span>{current + 1} / {questions.length}</span>
@@ -231,7 +232,7 @@ export function Test() {
               ? <span className={styles.feedbackCorrect}>Correct!</span>
               : <span className={styles.feedbackWrong}>Correct answer: <strong>{q.correct}</strong></span>}
             <button className={styles.btn} onClick={handleNext}>
-              {current + 1 < questions.length ? 'Next →' : 'See results'}
+              {current + 1 < questions.length ? <><span>Next</span> <ChevronRight size={14} strokeWidth={2} /></> : 'See results'}
             </button>
           </div>
         )}

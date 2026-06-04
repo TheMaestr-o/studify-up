@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { ChevronLeft, LayoutGrid, Check, X, Zap } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import type { Word } from '../../types'
 import styles from './Blocks.module.css'
@@ -256,8 +257,8 @@ export function Blocks() {
     if (!words.length) return <div className={styles.loading}>No words in this set.</div>
     return (
       <div className={styles.splash}>
-        <button onClick={() => navigate(`/set/${setId}`)} className={styles.back}>← Back to set</button>
-        <div className={styles.splashIcon}>⊞</div>
+        <button onClick={() => navigate(`/set/${setId}`)} className={styles.back}><ChevronLeft size={14} strokeWidth={2} /> Back to set</button>
+        <div className={styles.splashIcon}><LayoutGrid size={48} strokeWidth={1.4} /></div>
         <h2>Blocks</h2>
         <p>Place pieces on the 8×8 grid. Fill rows and columns to clear them. Answer vocabulary questions to earn more pieces!</p>
         <button className={styles.startBtn} onClick={startGame}>
@@ -272,11 +273,11 @@ export function Blocks() {
   if (phase === 'gameover') {
     return (
       <div className={styles.splash}>
-        <div className={styles.splashIcon}>💥</div>
+        <div className={styles.splashIcon}><Zap size={48} strokeWidth={1.4} /></div>
         <h2>Game Over</h2>
         <p className={styles.finalScore}>Score: <strong>{score}</strong></p>
         <button className={styles.startBtn} onClick={startGame}>Play Again</button>
-        <button className={styles.backBtn} onClick={() => navigate(`/set/${setId}`)}>← Back to set</button>
+        <button className={styles.backBtn} onClick={() => navigate(`/set/${setId}`)}><ChevronLeft size={14} strokeWidth={2} /> Back to set</button>
       </div>
     )
   }
@@ -287,7 +288,7 @@ export function Blocks() {
     <div className={styles.game}>
       {/* Top bar */}
       <div className={styles.topbar}>
-        <button onClick={() => navigate(`/set/${setId}`)} className={styles.back}>← Back</button>
+        <button onClick={() => navigate(`/set/${setId}`)} className={styles.back}><ChevronLeft size={14} strokeWidth={2} /> Back</button>
         <div className={styles.scoreBox}>Score: <strong>{score}</strong></div>
       </div>
 
@@ -376,8 +377,8 @@ export function Blocks() {
                 </button>
               ))}
             </div>
-            {qFeedback === 'correct' && <div className={styles.qMsg}>✓ Correct! 3 new pieces coming…</div>}
-            {qFeedback === 'wrong' && <div className={styles.qMsgWrong}>✗ Wrong. Correct: <strong>{question.correct}</strong></div>}
+            {qFeedback === 'correct' && <div className={styles.qMsg}><Check size={14} strokeWidth={2.5} style={{ verticalAlign: 'middle', marginRight: 4 }} />Correct! 3 new pieces coming…</div>}
+            {qFeedback === 'wrong' && <div className={styles.qMsgWrong}><X size={14} strokeWidth={2.5} style={{ verticalAlign: 'middle', marginRight: 4 }} />Wrong. Correct: <strong>{question.correct}</strong></div>}
           </div>
         </div>
       )}
