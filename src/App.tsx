@@ -4,6 +4,8 @@ import { LoginPage } from './pages/LoginPage'
 import { HomePage } from './pages/HomePage'
 import { NotFound } from './pages/NotFound'
 import { SetPage } from './pages/SetPage'
+import { SearchPage } from './pages/SearchPage'
+import { ProfilePage } from './pages/ProfilePage'
 import { Flashcards } from './modes/flashcards/Flashcards'
 import { Match } from './modes/match/Match'
 import { Learn } from './modes/learn/Learn'
@@ -37,6 +39,8 @@ export default function App() {
         }
       >
         <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/set/:setId/flashcards" element={<Flashcards />} />
         <Route path="/set/:setId/match" element={<Match />} />
         <Route path="/set/:setId/learn" element={<Learn />} />

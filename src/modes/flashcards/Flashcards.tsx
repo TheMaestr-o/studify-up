@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useWords } from '../../hooks/useWords'
 import styles from './Flashcards.module.css'
 import { saveReview } from '../../api/client'
+import { playWord } from '../../utils/audio'
 
 export function Flashcards() {
   const { setId } = useParams<{ setId: string }>()
@@ -89,9 +90,7 @@ export function Flashcards() {
           <div className={styles.front}>
             <div className={styles.lang}>EN</div>
             <div className={styles.term}>{word.word_en}</div>
-            {word.audio_url && (
-              <button className={styles.audio} onClick={e => { e.stopPropagation(); new Audio(word.audio_url!).play() }}>🔊</button>
-            )}
+            <button className={styles.audio} onClick={e => { e.stopPropagation(); playWord(word.word_en, word.audio_url) }}>🔊</button>
           </div>
           <div className={styles.back}>
             <div className={styles.lang}>UA</div>

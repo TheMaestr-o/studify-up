@@ -18,7 +18,17 @@
   border-radius: var(--r-pill);
   display: flex; align-items: center; gap: var(--sp-2);
   padding: 8px 18px; width: 320px;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
+.searchFocused {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(66, 85, 255, 0.18);
+}
+.searchInput {
+  background: none; border: none; outline: none;
+  font-size: 13px; color: var(--text); flex: 1; min-width: 0;
+}
+.searchInput::placeholder { color: var(--text-muted); }
 .placeholder { font-size: 13px; color: var(--text-muted); }
 .right { display: flex; align-items: center; gap: var(--sp-3); }
 .create {

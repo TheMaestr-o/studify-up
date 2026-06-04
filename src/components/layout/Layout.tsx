@@ -21,7 +21,7 @@ function BottomNav() {
       <NavLink to="/search" className={({ isActive }) => `${styles.bnBtn} ${isActive ? styles.bnActive : ''}`}>
         <Search size={22} strokeWidth={1.8} />
       </NavLink>
-      <button className={styles.bnBtn} onClick={() => navigate('/login')} title={googleUser?.name ?? 'Account'}>
+      <button className={styles.bnBtn} onClick={() => navigate('/profile')} title={googleUser?.name ?? 'Account'}>
         {googleUser?.picture
           ? <img src={googleUser.picture} alt="" style={{ width: 26, height: 26, borderRadius: '50%', objectFit: 'cover' }} referrerPolicy="no-referrer" />
           : <User size={22} strokeWidth={1.8} />

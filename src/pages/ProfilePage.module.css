@@ -1,0 +1,82 @@
+.page { animation: fadeIn 0.2s ease; max-width: 480px; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.header { margin-bottom: 24px; }
+.title { font-size: 28px; font-weight: 700; }
+
+/* Profile card */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 28px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  margin-bottom: 20px;
+}
+.avatarWrap { margin-bottom: 6px; }
+.avatar {
+  width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
+  display: block;
+}
+.avatarFallback {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, var(--accent));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 700; color: #fff;
+}
+.name { font-size: 18px; font-weight: 700; }
+.email { font-size: 14px; color: var(--text-muted); }
+
+/* Section rows */
+.section {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 16px 20px;
+  margin-bottom: 12px;
+}
+.sectionLabel {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+}
+.row { display: flex; align-items: center; gap: 10px; }
+
+.idValue { font-size: 15px; font-weight: 600; flex: 1; }
+.idInput {
+  flex: 1; background: var(--bg-surface); border: 1px solid var(--border-light);
+  border-radius: var(--r-sm); padding: 7px 12px;
+  font-size: 15px; color: var(--text); outline: none;
+  transition: border-color 0.15s;
+}
+.idInput:focus { border-color: var(--accent); }
+
+.editBtn {
+  font-size: 13px; color: var(--accent); background: none;
+  border: 1px solid rgba(66,85,255,0.3); border-radius: var(--r-sm);
+  padding: 5px 14px; cursor: pointer; transition: background 0.15s;
+}
+.editBtn:hover { background: rgba(66,85,255,0.1); }
+
+.saveBtn {
+  font-size: 13px; background: var(--accent); color: #fff;
+  border: none; border-radius: var(--r-sm);
+  padding: 6px 16px; cursor: pointer; font-weight: 600;
+  transition: background 0.15s;
+}
+.saveBtn:hover { background: var(--accent-hover); }
+
+.cancelBtn {
+  font-size: 13px; color: var(--text-muted); background: none;
+  border: 1px solid var(--border); border-radius: var(--r-sm);
+  padding: 6px 14px; cursor: pointer; transition: color 0.15s;
+}
+.cancelBtn:hover { color: var(--text); }
+
+.signOutBtn {
+  width: 100%; padding: 12px; background: rgba(239,68,68,0.12);
+  color: #f87171; border: 1px solid rgba(239,68,68,0.25);
+  border-radius: var(--r-md); font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: background 0.15s;
+}
+.signOutBtn:hover { background: rgba(239,68,68,0.2); }
+
+.version {
+  text-align: center; font-size: 12px; color: var(--text-muted);
+  margin-top: 8px; padding-bottom: 16px;
+}

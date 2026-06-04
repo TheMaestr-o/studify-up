@@ -1,5 +1,43 @@
 .loading { color: var(--text-muted); padding: 40px; text-align: center; }
 
+/* Back button */
+.backBtn {
+  background: none; color: rgba(255,255,255,0.5); font-size: 14px;
+  margin-bottom: 20px; display: flex; align-items: center; gap: 6px;
+  cursor: pointer; border: none; padding: 0;
+}
+.backBtn:hover { color: rgba(255,255,255,0.8); }
+
+/* Setup screen */
+.setupCard {
+  background: var(--bg-card); border-radius: var(--r-lg);
+  padding: 36px 32px; display: flex; flex-direction: column; gap: 28px;
+}
+.setupTitle { font-size: 22px; font-weight: 700; margin: 0; }
+.setupSection { display: flex; flex-direction: column; gap: 12px; }
+.setupLabel { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.countButtons { display: flex; gap: 10px; flex-wrap: wrap; }
+.countBtn {
+  background: var(--bg-elevated); border: 2px solid var(--border);
+  border-radius: var(--r-md); padding: 10px 20px;
+  font-size: 14px; font-weight: 600; color: var(--text);
+  cursor: pointer; transition: all 0.15s;
+}
+.countBtn:hover:not(:disabled) { border-color: var(--accent); }
+.countBtn:disabled { opacity: 0.35; cursor: not-allowed; }
+.countBtnActive {
+  border-color: var(--accent) !important;
+  background: rgba(139, 92, 246, 0.18) !important;
+  color: var(--accent) !important;
+}
+.startBtn {
+  background: var(--accent); color: #fff;
+  border-radius: var(--r-pill); padding: 13px 32px;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  align-self: flex-start; transition: background 0.15s;
+}
+.startBtn:hover { background: var(--accent-hover); }
+
 .page { max-width: 680px; margin: 0 auto; }
 
 .progress { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 14px; color: var(--text-muted); }

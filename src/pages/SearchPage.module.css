@@ -1,0 +1,62 @@
+.page { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.header { margin-bottom: 20px; }
+.title { font-size: 28px; font-weight: 700; }
+
+.inputWrap { margin-bottom: 24px; }
+.input {
+  width: 100%; box-sizing: border-box;
+  background: var(--bg-card); border: 1px solid var(--border-light);
+  border-radius: var(--r-pill); padding: 12px 20px;
+  font-size: 15px; color: var(--text); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input::placeholder { color: var(--text-muted); }
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(66, 85, 255, 0.18);
+}
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+
+.card {
+  background: var(--bg-card); border-radius: var(--r-md); padding: 20px;
+  display: block; border: 1px solid var(--border); transition: all 0.15s;
+  position: relative;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.cardStarter { border-color: rgba(66,85,255,0.3); background: rgba(66,85,255,0.08); }
+.cardStarter:hover { border-color: var(--accent); }
+
+.starterBadge {
+  display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+  background: rgba(66,85,255,0.25); color: #7c9dff; border-radius: var(--r-xs);
+  padding: 2px 7px; margin-bottom: 10px; text-transform: uppercase;
+}
+
+.cardTop { display: flex; align-items: center; gap: 12px; }
+
+.starterIconSmall {
+  width: 34px; height: 34px; border-radius: var(--r-sm);
+  background: var(--accent); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.meta { font-size: 13px; color: var(--text-muted); }
+.lang {
+  display: inline-block; margin-top: 8px; font-size: 11px; font-weight: 700;
+  background: rgba(66,85,255,0.2); color: var(--accent);
+  padding: 2px 8px; border-radius: var(--r-xs);
+}
+
+.arrow {
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+}
+
+.empty {
+  text-align: center; padding: 60px 24px;
+  font-size: 16px; color: var(--text-muted);
+}

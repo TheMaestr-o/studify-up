@@ -5,7 +5,6 @@ import styles from './Test.module.css'
 import type { Word } from '../../types'
 import { saveReview } from '../../api/client'
 
-const QUESTION_COUNT = 5
 const OPTIONS_COUNT = 4
 
 interface Question {
@@ -14,35 +13,53 @@ interface Question {
   correct: string
 }
 
-function buildQuestions(words: Word[]): Question[] {
+function buildQuestions(words: Word[], count: number): Question[] {
   const shuffled = [...words].sort(() => 0.5 - Math.random())
-  const pool = shuffled.slice(0, QUESTION_COUNT)
+  const pool = shuffled.slice(0, count)
   return pool.map(word => {
     const correct = word.word_uk ?? word.word_en
-    const distractors = words
-      .filter(w => w.id !== word.id)
-      .map(w => w.word_uk ?? w.word_en)
-      .sort(() => 0.5 - Math.random())
-      .slice(0, OPTIONS_COUNT - 1)
+    // Build distractor pool — if fewer than OPTIONS_COUNT-1 unique distractors exist,
+    // cycle through the word list again to fill the slots
+    const otherWords = words.filter(w => w.id !== word.id)
+    const distractorPool: string[] = []
+    // Keep cycling until we have enough distractors (handles sets with < 4 words)
+    while (distractorPool.length < OPTIONS_COUNT - 1) {
+      const cycled = [...otherWords]
+        .sort(() => 0.5 - Math.random())
+        .map(w => w.word_uk ?? w.word_en)
+      for (const d of cycled) {
+        if (distractorPool.length < OPTIONS_COUNT - 1) {
+          distractorPool.push(d)
+        }
+      }
+      // Safety: if otherWords is empty, break
+      if (otherWords.length === 0) break
+    }
+    const distractors = distractorPool.slice(0, OPTIONS_COUNT - 1)
     const options = [correct, ...distractors].sort(() => 0.5 - Math.random())
     return { word, options, correct }
   })
 }
+
+type Phase = 'setup' | 'testing' | 'done'
 
 export function Test() {
   const { setId } = useParams<{ setId: string }>()
   const navigate = useNavigate()
   const { words, loading } = useWords(setId ?? null)
 
+  const [phase, setPhase] = useState<Phase>('setup')
+  const [questionCount, setQuestionCount] = useState(5)
+
   const questions = useMemo(
-    () => (words.length >= 2 ? buildQuestions(words) : []),
-    [words]
+    () => (phase === 'testing' && words.length >= 2 ? buildQuestions(words, questionCount) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [phase, words, questionCount]
   )
 
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState<string | null>(null)
   const [answers, setAnswers] = useState<boolean[]>([])
-  const [done, setDone] = useState(false)
 
   const q = questions[current] ?? null
 
@@ -61,7 +78,7 @@ export function Test() {
     const nextAnswers = [...answers, correct]
     if (current + 1 >= questions.length) {
       setAnswers(nextAnswers)
-      setDone(true)
+      setPhase('done')
     } else {
       setAnswers(nextAnswers)
       setCurrent(c => c + 1)
@@ -73,7 +90,14 @@ export function Test() {
     setCurrent(0)
     setSelected(null)
     setAnswers([])
-    setDone(false)
+    setPhase('setup')
+  }
+
+  const handleStartTest = () => {
+    setCurrent(0)
+    setSelected(null)
+    setAnswers([])
+    setPhase('testing')
   }
 
   if (loading) return <div className={styles.loading}>Loading…</div>
@@ -82,7 +106,49 @@ export function Test() {
 
   if (words.length < 2) return <div className={styles.loading}>Need at least 2 words to run a test.</div>
 
-  if (done) {
+  // Setup screen
+  if (phase === 'setup') {
+    const countOptions: Array<number | 'all'> = [5, 10, 20, 'all']
+    const showAll = words.length <= 30
+    return (
+      <div className={styles.page}>
+        <button onClick={() => navigate(`/set/${setId}`)} className={styles.backBtn}>
+          ← Back to set
+        </button>
+        <div className={styles.setupCard}>
+          <h2 className={styles.setupTitle}>Configure your test</h2>
+          <div className={styles.setupSection}>
+            <div className={styles.setupLabel}>Number of questions</div>
+            <div className={styles.countButtons}>
+              {countOptions.map(opt => {
+                if (opt === 'all' && !showAll) return null
+                const value = opt === 'all' ? words.length : opt
+                const displayLabel = opt === 'all' ? `All (${words.length})` : String(opt)
+                const isDisabled = opt !== 'all' && (opt as number) > words.length
+                const isSelected = questionCount === value
+                return (
+                  <button
+                    key={String(opt)}
+                    className={`${styles.countBtn} ${isSelected ? styles.countBtnActive : ''}`}
+                    onClick={() => setQuestionCount(value)}
+                    disabled={isDisabled}
+                  >
+                    {displayLabel}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+          <button className={styles.startBtn} onClick={handleStartTest}>
+            Start test →
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // Done screen
+  if (phase === 'done') {
     const score = answers.filter(Boolean).length
     const pct = Math.round((score / questions.length) * 100)
     return (
