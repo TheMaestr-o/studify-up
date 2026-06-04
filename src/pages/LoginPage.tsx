@@ -13,6 +13,15 @@ interface GoogleUser {
   picture: string
 }
 
+const FEATURES = [
+  { icon: '🃏', text: '6 study modes — Flashcards, Match, Learn, Test, Blocks, Blast' },
+  { icon: '🧠', text: 'Spaced repetition (FSRS) — remember words long-term' },
+  { icon: '🔊', text: 'Audio pronunciation on every card' },
+  { icon: '📱', text: 'Study on web or Telegram — progress syncs automatically' },
+  { icon: '👨‍🏫', text: 'Teacher assigns words directly to your account' },
+  { icon: '🆓', text: 'Everything free — no paywalls, no limits' },
+]
+
 export function LoginPage() {
   const [googleUser, setGoogleUser] = useState<GoogleUser | null>(null)
   const [studentId, setStudentId] = useState('')
@@ -21,12 +30,7 @@ export function LoginPage() {
     const credential = credentialResponse.credential
     if (!credential) return
     const payload = decodeJwt(credential)
-    const user: GoogleUser = {
-      name: payload.name ?? '',
-      email: payload.email ?? '',
-      picture: payload.picture ?? '',
-    }
-    setGoogleUser(user)
+    setGoogleUser({ name: payload.name ?? '', email: payload.email ?? '', picture: payload.picture ?? '' })
   }
 
   function handleLink(e: React.FormEvent) {
@@ -40,41 +44,76 @@ export function LoginPage() {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.card}>
-        <div className={styles.logo}>S</div>
-        <h1 className={styles.title}>Studify Up</h1>
-        <p className={styles.subtitle}>Study smarter. Remember forever.</p>
+      <div className={styles.inner}>
 
-        <div className={styles.divider} />
+        {/* LEFT: Hero */}
+        <div className={styles.hero}>
+          <div className={styles.badge}>Free Quizlet alternative</div>
+          <h1 className={styles.heroTitle}>
+            Study smarter.<br />Remember forever.
+          </h1>
+          <p className={styles.heroSub}>
+            Everything Quizlet charges for — completely free.<br />
+            Used by students and teachers worldwide.
+          </p>
+          <ul className={styles.features}>
+            {FEATURES.map(f => (
+              <li key={f.text} className={styles.feature}>
+                <span className={styles.featureIcon}>{f.icon}</span>
+                <span>{f.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        {!googleUser ? (
-          <div className={styles.googleWrap}>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => console.error('Google login failed')}
-              theme="filled_blue"
-              shape="pill"
-              size="large"
-              width="320"
-            />
-          </div>
-        ) : (
-          <form className={styles.step2} onSubmit={handleLink}>
-            <p className={styles.step2Title}>One more step</p>
-            <p className={styles.hint}>Your teacher will give you this ID</p>
-            <input
-              className={styles.input}
-              type="text"
-              placeholder="Enter your Student ID"
-              value={studentId}
-              onChange={e => setStudentId(e.target.value)}
-              autoFocus
-            />
-            <button className={styles.linkButton} type="submit">
-              Link account
-            </button>
-          </form>
-        )}
+        {/* RIGHT: Sign-in card */}
+        <div className={styles.card}>
+          <div className={styles.logo}>S</div>
+          <h2 className={styles.cardTitle}>Studify Up</h2>
+          <p className={styles.cardSub}>Study smarter. Remember forever.</p>
+
+          <div className={styles.divider} />
+
+          {!googleUser ? (
+            <div className={styles.googleWrap}>
+              <p className={styles.signInLabel}>Sign in to get started</p>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => console.error('Google login failed')}
+                theme="filled_blue"
+                shape="pill"
+                size="large"
+                width="280"
+              />
+              <p className={styles.hint}>Free forever · No credit card needed</p>
+            </div>
+          ) : (
+            <form className={styles.step2} onSubmit={handleLink}>
+              <div className={styles.userRow}>
+                {googleUser.picture && (
+                  <img src={googleUser.picture} className={styles.userPic} alt="" referrerPolicy="no-referrer" />
+                )}
+                <div>
+                  <div className={styles.userName}>{googleUser.name}</div>
+                  <div className={styles.userEmail}>{googleUser.email}</div>
+                </div>
+              </div>
+              <p className={styles.step2Title}>Enter your Student ID</p>
+              <p className={styles.hint}>Your teacher will send you this number</p>
+              <input
+                className={styles.input}
+                type="text"
+                inputMode="numeric"
+                placeholder="e.g. 123456789"
+                value={studentId}
+                onChange={e => setStudentId(e.target.value)}
+                autoFocus
+              />
+              <button className={styles.linkButton} type="submit">Start studying →</button>
+            </form>
+          )}
+        </div>
+
       </div>
     </div>
   )

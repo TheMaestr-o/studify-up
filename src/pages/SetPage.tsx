@@ -76,8 +76,16 @@ export function SetPage() {
     ? null
     : (setName ?? setId?.replace(/^vs-/, '').replace(/-/g, ' ') ?? '')
 
+  const isLoggedIn = Boolean(localStorage.getItem('userId') && localStorage.getItem('googleUser'))
+
   return (
     <div className={styles.page}>
+      {!isLoggedIn && (
+        <div className={styles.guestBanner}>
+          <span>Sign in to track progress, study with all 6 modes, and sync with Telegram</span>
+          <a href="/login" className={styles.guestCta}>Sign in free →</a>
+        </div>
+      )}
       <div className={styles.header}>
         <h1 className={styles.title}>
           {displayTitle === null

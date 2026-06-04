@@ -24,6 +24,11 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      {/* Public route — viewable without login */}
+      <Route element={<Layout />}>
+        <Route path="/set/:setId" element={<SetPage />} />
+      </Route>
+
       <Route
         element={
           <RequireAuth>
@@ -32,7 +37,6 @@ export default function App() {
         }
       >
         <Route path="/" element={<HomePage />} />
-        <Route path="/set/:setId" element={<SetPage />} />
         <Route path="/set/:setId/flashcards" element={<Flashcards />} />
         <Route path="/set/:setId/match" element={<Match />} />
         <Route path="/set/:setId/learn" element={<Learn />} />
