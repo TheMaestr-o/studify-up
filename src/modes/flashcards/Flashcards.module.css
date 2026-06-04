@@ -27,3 +27,29 @@
 .btnKnow:hover { background: rgba(35,178,109,0.25); }
 .btnLearning { background: rgba(255,153,0,0.15); color: var(--learned); border: 1px solid rgba(255,153,0,0.3); border-radius: var(--r-pill); padding: 10px 20px; font-size: 14px; font-weight: 600; }
 .btnLearning:hover { background: rgba(255,153,0,0.25); }
+
+.done {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 20px; padding: 48px 24px; text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.doneEmoji { font-size: 56px; }
+.doneTitle { font-size: 26px; font-weight: 700; }
+.doneStats { display: flex; gap: 40px; }
+.doneStat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.doneStatNum { font-size: 32px; font-weight: 700; }
+.doneStatLabel { font-size: 13px; color: var(--text-muted); }
+.btnStudyAgain {
+  background: var(--accent); color: #fff;
+  border-radius: var(--r-pill); padding: 13px 32px;
+  font-size: 15px; font-weight: 600; border: none;
+  margin-top: 8px;
+}
+.btnStudyAgain:hover { background: var(--accent-hover); }
+.btnBack {
+  background: transparent; color: var(--text-muted);
+  border: 1px solid var(--border-light); border-radius: var(--r-pill);
+  padding: 10px 24px; font-size: 14px;
+}
+.btnBack:hover { color: var(--text); }

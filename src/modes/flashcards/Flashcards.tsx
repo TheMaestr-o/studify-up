@@ -29,8 +29,47 @@ export function Flashcards() {
     return () => window.removeEventListener('keydown', fn)
   }, [next, prev])
 
+  const allReviewed = known.size + learning.size >= total && total > 0
+
+  const reset = () => {
+    setIndex(0)
+    setFlipped(false)
+    setKnown(new Set())
+    setLearning(new Set())
+  }
+
   if (loading) return <div className={styles.loading}>Loading…</div>
-  if (!word) return null
+  if (!word && !allReviewed) return null
+
+  if (allReviewed) return (
+    <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back to set
+      </button>
+      <div className={styles.done}>
+        <div className={styles.doneEmoji}>🎉</div>
+        <h2 className={styles.doneTitle}>Round complete!</h2>
+        <div className={styles.doneStats}>
+          <div className={styles.doneStat}>
+            <span className={styles.doneStatNum} style={{ color: 'var(--mastered)' }}>{known.size}</span>
+            <span className={styles.doneStatLabel}>Know it</span>
+          </div>
+          <div className={styles.doneStat}>
+            <span className={styles.doneStatNum} style={{ color: 'var(--learned)' }}>{learning.size}</span>
+            <span className={styles.doneStatLabel}>Still learning</span>
+          </div>
+        </div>
+        {learning.size > 0 && (
+          <button className={styles.btnStudyAgain} onClick={reset}>
+            Study again ({learning.size} remaining)
+          </button>
+        )}
+        <button className={styles.btnBack} onClick={() => navigate(`/set/${setId}`)}>
+          Back to set
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <div className={styles.page}>
