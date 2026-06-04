@@ -1,0 +1,22 @@
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; animation: overlayIn 0.15s ease;
+}
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+.panel {
+  background: var(--bg-elevated); border-radius: var(--r-lg);
+  min-width: 360px; max-width: 520px; width: 90vw;
+  box-shadow: var(--shadow-lg); animation: panelIn 0.15s ease;
+}
+@keyframes panelIn { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+.header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 0; }
+.title { font-size: 16px; font-weight: 600; }
+.close {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); color: var(--text-muted); font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+}
+.close:hover { background: rgba(255,255,255,0.15); color: var(--text); }
+.body { padding: 20px 24px 24px; }

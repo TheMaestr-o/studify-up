@@ -1,0 +1,7 @@
+.page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; text-align: center; }
+.icon { font-size: 48px; }
+.page h2 { font-size: 28px; font-weight: 700; }
+.page p { color: var(--text-muted); font-size: 16px; max-width: 400px; }
+.btn { background: var(--mode-blocks); color: #fff; border-radius: var(--r-pill); padding: 14px 32px; font-size: 16px; font-weight: 600; }
+.btn:hover { opacity: 0.9; }
+.opts { background: var(--bg-elevated); color: var(--text-muted); border-radius: var(--r-pill); padding: 10px 24px; font-size: 14px; border: 1px solid var(--border-light); }

@@ -1,0 +1,25 @@
+.loading { color: var(--text-muted); padding: 40px; text-align: center; }
+.done { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; text-align: center; font-size: 48px; }
+.done h2 { font-size: 24px; font-weight: 700; }
+.page { max-width: 680px; margin: 0 auto; }
+.progress { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; font-size: 14px; color: var(--text-muted); }
+.bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.fill { height: 100%; background: var(--mastered); transition: width 0.4s; }
+.card { background: var(--bg-card); border-radius: var(--r-lg); padding: 32px; }
+.prompt { font-size: 24px; font-weight: 600; text-align: center; margin-bottom: 28px; }
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.opt { background: var(--bg-elevated); border: 2px solid var(--border); border-radius: var(--r-md); padding: 14px 16px; font-size: 14px; font-weight: 500; color: var(--text); text-align: left; transition: all 0.15s; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:disabled { opacity: 0.5; }
+.correct { border-color: var(--mastered) !important; background: rgba(35,178,109,0.15) !important; color: var(--mastered) !important; }
+.written { display: flex; flex-direction: column; gap: 12px; }
+.input { width: 100%; background: var(--bg-elevated); border: 2px solid var(--border-light); border-radius: var(--r-md); padding: 14px 16px; font-size: 16px; color: var(--text); transition: border-color 0.15s; }
+.input:focus { border-color: var(--accent); }
+.inputOk { border-color: var(--mastered) !important; }
+.inputBad { border-color: var(--learned) !important; }
+.btn { background: var(--accent); color: #fff; border-radius: var(--r-pill); padding: 12px 28px; font-size: 15px; font-weight: 600; align-self: flex-start; }
+.btn:hover:not(:disabled) { background: var(--accent-hover); }
+.wrongMsg { font-size: 14px; color: var(--text-muted); }
+.wrongMsg strong { color: var(--mastered); }
+.override { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 8px 16px; font-size: 13px; }
+.next { background: var(--accent); color: #fff; border-radius: var(--r-pill); padding: 10px 24px; font-size: 14px; font-weight: 600; }

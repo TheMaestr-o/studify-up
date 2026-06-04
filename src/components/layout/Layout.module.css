@@ -1,0 +1,11 @@
+.root { min-height: 100vh; }
+.body {
+  display: flex;
+  padding-top: var(--topbar-h);
+}
+.main {
+  flex: 1;
+  margin-left: var(--sidebar-w);
+  padding: var(--sp-8) var(--sp-12);
+  max-width: 1200px;
+}

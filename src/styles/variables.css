@@ -1,0 +1,53 @@
+:root {
+  --bg-base: #0D1136;
+  --bg-surface: #1A1F5E;
+  --bg-card: #232B5E;
+  --bg-elevated: #262D52;
+
+  --accent: #4255FF;
+  --accent-hover: #3245e8;
+  --cta: #FFD000;
+  --cta-text: #0D1136;
+
+  --learned: #FF9900;
+  --mastered: #23B26D;
+
+  --text: #fff;
+  --text-muted: rgba(255,255,255,0.5);
+  --text-dim: rgba(255,255,255,0.3);
+
+  --border: rgba(255,255,255,0.08);
+  --border-light: rgba(255,255,255,0.15);
+
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-pill: 24px;
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  --topbar-h: 56px;
+  --sidebar-w: 64px;
+
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --mode-flashcards: #4255FF;
+  --mode-learn: #6366F1;
+  --mode-test: #7C3AED;
+  --mode-blocks: #2563EB;
+  --mode-blast: #0891B2;
+  --mode-match: #0D9488;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.25);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.35);
+  --shadow-lg: 0 8px 48px rgba(0,0,0,0.5);
+}

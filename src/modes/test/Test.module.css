@@ -1,0 +1,6 @@
+.page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; text-align: center; }
+.lock { font-size: 48px; }
+.page h2 { font-size: 24px; font-weight: 700; }
+.page p { color: var(--text-muted); font-size: 16px; }
+.cta { background: var(--cta); color: var(--cta-text); border-radius: var(--r-pill); padding: 14px 32px; font-size: 15px; font-weight: 700; }
+.cta:hover { background: #e6bb00; }
