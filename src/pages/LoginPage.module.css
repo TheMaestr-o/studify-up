@@ -234,6 +234,27 @@
 }
 .skipButton:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
 
+.noGoogleBtn {
+  margin-top: 12px;
+  background: none; border: none;
+  color: var(--text-muted); font-size: 13px;
+  cursor: pointer; text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.noGoogleBtn:hover { color: var(--text); }
+
+.noGoogleRow {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; background: var(--bg-elevated);
+  border-radius: var(--r-md); padding: 10px 14px;
+}
+.nameInput {
+  flex: 1; background: transparent; border: none;
+  color: var(--text); font-size: 14px; outline: none;
+}
+.nameInput::placeholder { color: var(--text-muted); }
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
