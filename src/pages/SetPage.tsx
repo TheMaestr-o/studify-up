@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle } from 'lucide-react'
+import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle, Share2 } from 'lucide-react'
 import { useWords } from '../hooks/useWords'
 import { fetchSetMeta } from '../api/client'
 import { STARTER_PACK_ID, STARTER_PACK_NAME, STARTER_WORDS } from '../data/starterPack'
@@ -51,12 +51,7 @@ export function SetPage() {
     <div className={styles.page}>
       <div className={styles.header}>
         <Skeleton width="200px" height="32px" borderRadius="8px" />
-        <div className={styles.actions}>
-          <Skeleton width="72px" height="34px" borderRadius="6px" />
-          <Skeleton width="82px" height="34px" borderRadius="6px" />
-          <Skeleton width="72px" height="34px" borderRadius="6px" />
-          <Skeleton width="40px" height="34px" borderRadius="6px" />
-        </div>
+        <Skeleton width="36px" height="36px" borderRadius="8px" />
       </div>
       <Skeleton width="80px" height="16px" borderRadius="4px" />
       <div className={styles.modeGrid} style={{ marginTop: '24px' }}>
@@ -97,12 +92,9 @@ export function SetPage() {
             ? <span className={styles.titleSkeleton} />
             : displayTitle}
         </h1>
-        <div className={styles.actions}>
-          <button className={styles.actionBtn}>🔖 Save</button>
-          <button className={styles.actionBtn}>📊 Groups</button>
-          <button className={styles.actionBtn} onClick={handleShare}>⬆ Share</button>
-          <button className={styles.actionBtn}>···</button>
-        </div>
+        <button className={styles.shareBtn} onClick={handleShare} title="Copy link">
+          <Share2 size={16} strokeWidth={2} />
+        </button>
       </div>
       <p className={styles.meta}>{words.length} terms</p>
 
@@ -155,7 +147,6 @@ export function SetPage() {
       <div className={styles.termSection}>
         <div className={styles.termHeader}>
           <h2>Terms in set ({words.length})</h2>
-          <button className={styles.statsBtn}>Your statistics ▼</button>
         </div>
         {words.map(w => (
           <div key={w.id} className={styles.termCard}>
@@ -170,11 +161,6 @@ export function SetPage() {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className={styles.stickyBar}>
-        <button className={styles.stickyBtn}>Hide definitions</button>
-        <button className={styles.stickyBtn}>Repeat with activity ▼</button>
       </div>
 
       <Toast message="Copied!" visible={toastVisible} />

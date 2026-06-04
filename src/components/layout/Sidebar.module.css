@@ -15,4 +15,11 @@
   transition: all 0.15s; text-decoration: none;
 }
 .icon:hover { background: rgba(255,255,255,0.08); color: var(--text); }
-.active { background: rgba(66,85,255,0.15); color: var(--accent); }
+.active {
+  background: rgba(66,85,255,0.25);
+  color: var(--accent);
+  border-left: 2px solid var(--accent);
+  margin-left: -2px;
+}
+.disabled { opacity: 0.3; cursor: not-allowed; }
+.disabled:hover { background: transparent; color: var(--text-muted); }

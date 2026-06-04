@@ -1,6 +1,6 @@
 import type { Word, VocabSet, WordProgress, ReviewPayload, TelegramAuthData } from '../types'
 
-const BASE = (import.meta as any).env?.VITE_API_URL ?? 'https://english-bot.ohnedan.workers.dev'
+const BASE = import.meta.env.VITE_API_URL ?? 'https://english-bot.ohnedan.workers.dev'
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(BASE + path, init)

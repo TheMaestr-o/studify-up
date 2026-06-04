@@ -9,7 +9,7 @@
 .left { display: flex; align-items: center; gap: var(--sp-4); }
 .logo {
   width: 32px; height: 32px; background: var(--accent);
-  border-radius: var(--r-sm);
+  border-radius: var(--r-md);
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 18px;
 }

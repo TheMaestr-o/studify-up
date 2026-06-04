@@ -4,6 +4,7 @@ import { useWords } from '../../hooks/useWords'
 import styles from './Test.module.css'
 import type { Word } from '../../types'
 import { saveReview } from '../../api/client'
+import { shuffleArray } from '../../utils/shuffle'
 
 const OPTIONS_COUNT = 4
 
@@ -14,7 +15,7 @@ interface Question {
 }
 
 function buildQuestions(words: Word[], count: number): Question[] {
-  const shuffled = [...words].sort(() => 0.5 - Math.random())
+  const shuffled = shuffleArray(words)
   const pool = shuffled.slice(0, count)
   return pool.map(word => {
     const correct = word.word_uk ?? word.word_en
@@ -24,8 +25,7 @@ function buildQuestions(words: Word[], count: number): Question[] {
     const distractorPool: string[] = []
     // Keep cycling until we have enough distractors (handles sets with < 4 words)
     while (distractorPool.length < OPTIONS_COUNT - 1) {
-      const cycled = [...otherWords]
-        .sort(() => 0.5 - Math.random())
+      const cycled = shuffleArray(otherWords)
         .map(w => w.word_uk ?? w.word_en)
       for (const d of cycled) {
         if (distractorPool.length < OPTIONS_COUNT - 1) {
@@ -36,7 +36,7 @@ function buildQuestions(words: Word[], count: number): Question[] {
       if (otherWords.length === 0) break
     }
     const distractors = distractorPool.slice(0, OPTIONS_COUNT - 1)
-    const options = [correct, ...distractors].sort(() => 0.5 - Math.random())
+    const options = shuffleArray([correct, ...distractors])
     return { word, options, correct }
   })
 }
@@ -46,7 +46,7 @@ type Phase = 'setup' | 'testing' | 'done'
 export function Test() {
   const { setId } = useParams<{ setId: string }>()
   const navigate = useNavigate()
-  const { words, loading } = useWords(setId ?? null)
+  const { words, loading, error } = useWords(setId ?? null)
 
   const [phase, setPhase] = useState<Phase>('setup')
   const [questionCount, setQuestionCount] = useState(5)
@@ -101,8 +101,29 @@ export function Test() {
   }
 
   if (loading) return <div className={styles.loading}>Loading…</div>
+  if (error) return (
+    <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back
+      </button>
+      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Failed to load words.</p>
+        <button onClick={() => window.location.reload()} style={{ marginTop: 16, background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '24px', padding: '10px 24px', cursor: 'pointer' }}>Retry</button>
+      </div>
+    </div>
+  )
 
-  if (!words.length) return <div className={styles.loading}>No words in this set.</div>
+  if (!words.length) return (
+    <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back to set
+      </button>
+      <div style={{ textAlign: 'center', padding: '80px 24px', color: 'rgba(255,255,255,0.4)' }}>
+        <p style={{ fontSize: 16 }}>No words in this set yet.</p>
+        <p style={{ fontSize: 14, marginTop: 8 }}>Ask your teacher to add some words.</p>
+      </div>
+    </div>
+  )
 
   if (words.length < 2) return <div className={styles.loading}>Need at least 2 words to run a test.</div>
 

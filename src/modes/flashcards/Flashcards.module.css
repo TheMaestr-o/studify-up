@@ -15,6 +15,20 @@
   border: 1px solid var(--border); box-shadow: var(--shadow-md);
 }
 .back { transform: rotateY(180deg); }
+.cardWrap:hover .front,
+.cardWrap:hover .back {
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: var(--shadow-lg);
+}
+.tapHint {
+  position: absolute;
+  bottom: 16px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.flipped .tapHint { display: none; }
 .lang { font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
 .term { font-size: 26px; font-weight: 600; text-align: center; padding: 0 32px; }
 .audio { background: rgba(255,255,255,0.08); border-radius: var(--r-sm); padding: 8px 12px; color: var(--text-muted); font-size: 18px; }

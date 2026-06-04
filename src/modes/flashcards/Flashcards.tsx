@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useWords } from '../../hooks/useWords'
 import styles from './Flashcards.module.css'
@@ -8,7 +8,7 @@ import { playWord } from '../../utils/audio'
 export function Flashcards() {
   const { setId } = useParams<{ setId: string }>()
   const navigate = useNavigate()
-  const { words, loading } = useWords(setId ?? null)
+  const { words, loading, error } = useWords(setId ?? null)
   const [index, setIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [known, setKnown] = useState<Set<string>>(new Set())
@@ -16,9 +16,10 @@ export function Flashcards() {
 
   const word = words[index]
   const total = words.length
+  const cardStartRef = useRef(Date.now())
 
-  const next = useCallback(() => { setIndex(i => Math.min(i + 1, total - 1)); setFlipped(false) }, [total])
-  const prev = useCallback(() => { setIndex(i => Math.max(i - 1, 0)); setFlipped(false) }, [])
+  const next = useCallback(() => { cardStartRef.current = Date.now(); setIndex(i => Math.min(i + 1, total - 1)); setFlipped(false) }, [total])
+  const prev = useCallback(() => { cardStartRef.current = Date.now(); setIndex(i => Math.max(i - 1, 0)); setFlipped(false) }, [])
 
   useEffect(() => {
     const fn = (e: KeyboardEvent) => {
@@ -40,7 +41,28 @@ export function Flashcards() {
   }
 
   if (loading) return <div className={styles.loading}>Loading…</div>
-  if (!word && !allReviewed) return null
+  if (error) return (
+    <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back
+      </button>
+      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Failed to load words.</p>
+        <button onClick={() => window.location.reload()} style={{ marginTop: 16, background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '24px', padding: '10px 24px', cursor: 'pointer' }}>Retry</button>
+      </div>
+    </div>
+  )
+  if (!word && !allReviewed) return (
+    <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back to set
+      </button>
+      <div style={{ textAlign: 'center', padding: '80px 24px', color: 'rgba(255,255,255,0.4)' }}>
+        <p style={{ fontSize: 16 }}>No words in this set yet.</p>
+        <p style={{ fontSize: 14, marginTop: 8 }}>Ask your teacher to add some words.</p>
+      </div>
+    </div>
+  )
 
   if (allReviewed) return (
     <div className={styles.page}>
@@ -91,6 +113,7 @@ export function Flashcards() {
             <div className={styles.lang}>EN</div>
             <div className={styles.term}>{word.word_en}</div>
             <button className={styles.audio} onClick={e => { e.stopPropagation(); playWord(word.word_en, word.audio_url) }}>🔊</button>
+            <div className={styles.tapHint}>tap to flip</div>
           </div>
           <div className={styles.back}>
             <div className={styles.lang}>UA</div>
@@ -102,7 +125,7 @@ export function Flashcards() {
       <div className={styles.actions}>
         <button className={styles.btnLearning} onClick={() => {
           const userId = localStorage.getItem('userId')
-          if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: false, responseTimeMs: 500 })
+          if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: false, responseTimeMs: Date.now() - cardStartRef.current })
           setLearning(s => new Set([...s, word.id])); setKnown(k => { const n = new Set(k); n.delete(word.id); return n }); next()
         }}>↩ Still Learning</button>
         <div className={styles.nav}>
@@ -111,7 +134,7 @@ export function Flashcards() {
         </div>
         <button className={styles.btnKnow} onClick={() => {
           const userId = localStorage.getItem('userId')
-          if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: true, responseTimeMs: 500 })
+          if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: true, responseTimeMs: Date.now() - cardStartRef.current })
           setKnown(k => new Set([...k, word.id])); setLearning(s => { const n = new Set(s); n.delete(word.id); return n }); next()
         }}>Know it ✓</button>
       </div>

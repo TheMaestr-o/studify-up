@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useWords } from '../../hooks/useWords'
 import styles from './Learn.module.css'
 import type { MasteryLevel } from '../../types'
 import { saveReview } from '../../api/client'
+import { shuffleArray } from '../../utils/shuffle'
 
 function levenshtein(a: string, b: string): number {
   const dp = Array.from({ length: a.length + 1 }, (_, i) =>
@@ -25,7 +26,7 @@ function isAccepted(input: string, correct: string): boolean {
 export function Learn() {
   const { setId } = useParams<{ setId: string }>()
   const navigate = useNavigate()
-  const { words, loading } = useWords(setId ?? null)
+  const { words, loading, error } = useWords(setId ?? null)
   const [mastery, setMastery] = useState<Record<string, { level: MasteryLevel; streak: number }>>({})
   const [qType, setQType] = useState<'mc' | 'written'>('mc')
   const [input, setInput] = useState('')
@@ -33,22 +34,29 @@ export function Learn() {
   const [wrongAnswer, setWrongAnswer] = useState('')
   const [tick, setTick] = useState(0)
 
+  const [wordIdx, setWordIdx] = useState(0)
+  const questionStartRef = useRef(Date.now())
+
   const unmastered = useMemo(
     () => words.filter(w => (mastery[w.id]?.level ?? 'not_studied') !== 'mastered'),
     [words, mastery, tick]
   )
 
-  const word = useMemo(() => {
-    if (!unmastered.length) return null
-    return unmastered[Math.floor(Math.random() * unmastered.length)]!
-  }, [unmastered, tick])
+  useEffect(() => {
+    if (!unmastered.length) return
+    setWordIdx(Math.floor(Math.random() * unmastered.length))
+  }, [tick, unmastered.length])
+
+  const word = unmastered[wordIdx % Math.max(unmastered.length, 1)] ?? null
+
+  useEffect(() => { questionStartRef.current = Date.now() }, [word])
 
   const opts = useMemo(() => {
     if (!word) return []
     const correct = word.word_uk ?? word.word_en
     const pool = words.filter(w => w.id !== word.id).map(w => w.word_uk ?? w.word_en)
-    const distractors = pool.sort(() => 0.5 - Math.random()).slice(0, 3)
-    return [correct, ...distractors].sort(() => 0.5 - Math.random())
+    const distractors = shuffleArray(pool).slice(0, 3)
+    return shuffleArray([correct, ...distractors])
   }, [word, words])
 
   const masteredCount = Object.values(mastery).filter(m => m.level === 'mastered').length
@@ -60,7 +68,7 @@ export function Learn() {
     const prev = mastery[word.id] ?? { level: 'not_studied' as MasteryLevel, streak: 0 }
     const userId = localStorage.getItem('userId')
     if (userId) {
-      saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: ok, responseTimeMs: 500 })
+      saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: ok, responseTimeMs: Date.now() - questionStartRef.current })
     }
     if (ok) {
       const streak = prev.streak + 1
@@ -77,8 +85,29 @@ export function Learn() {
   }
 
   if (loading) return <div className={styles.loading}>Loading…</div>
+  if (error) return (
+    <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back
+      </button>
+      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Failed to load words.</p>
+        <button onClick={() => window.location.reload()} style={{ marginTop: 16, background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '24px', padding: '10px 24px', cursor: 'pointer' }}>Retry</button>
+      </div>
+    </div>
+  )
 
-  if (!words.length) return <div className={styles.loading}>No words in this set.</div>
+  if (!words.length) return (
+    <div className={styles.page}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back to set
+      </button>
+      <div style={{ textAlign: 'center', padding: '80px 24px', color: 'rgba(255,255,255,0.4)' }}>
+        <p style={{ fontSize: 16 }}>No words in this set yet.</p>
+        <p style={{ fontSize: 14, marginTop: 8 }}>Ask your teacher to add some words.</p>
+      </div>
+    </div>
+  )
 
   if (unmastered.length === 0) return (
     <div className={styles.done}>

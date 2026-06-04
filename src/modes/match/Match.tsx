@@ -23,7 +23,7 @@ function makeBatch(words: { id: string; word_en: string; word_uk: string | null 
 export function Match() {
   const { setId } = useParams<{ setId: string }>()
   const navigate = useNavigate()
-  const { words, loading } = useWords(setId ?? null)
+  const { words, loading, error } = useWords(setId ?? null)
   const [phase, setPhase] = useState<'start' | 'playing' | 'done'>('start')
   const [batch, setBatch] = useState(0)
   const [cards, setCards] = useState<MatchCard[]>([])
@@ -31,6 +31,7 @@ export function Match() {
   const [timeMs, setTimeMs] = useState(0)
   const [bestMs, setBestMs] = useState<number | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
 
   const startBatch = useCallback((b: number, ws: typeof words) => {
     setCards(makeBatch(ws, b))
@@ -44,7 +45,10 @@ export function Match() {
     startBatch(0, words)
   }, [words, startBatch])
 
-  useEffect(() => () => { if (timerRef.current) clearInterval(timerRef.current) }, [])
+  useEffect(() => () => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    timeoutsRef.current.forEach(clearTimeout)
+  }, [])
 
   const tapCard = useCallback((cardId: string) => {
     setCards(prev => {
@@ -55,15 +59,15 @@ export function Match() {
       if (card.wordId === sel.wordId && card.type !== sel.type) {
         const matchedWordId = card.wordId
         const next = prev.map(c => c.wordId === matchedWordId ? { ...c, isMatched: true, isSelected: false } : c)
-        setTimeout(() => {
+        timeoutsRef.current.push(setTimeout(() => {
           setCards(p => p.map(c => c.wordId === matchedWordId ? { ...c, isGone: true } : c))
-        }, 300)
+        }, 300))
         setSelected(null)
         if (next.every(c => c.isMatched)) {
           if (timerRef.current) clearInterval(timerRef.current)
           const nextB = batch + 1
           if (nextB * 6 < words.length) {
-            setTimeout(() => { setBatch(nextB); startBatch(nextB, words) }, 600)
+            timeoutsRef.current.push(setTimeout(() => { setBatch(nextB); startBatch(nextB, words) }, 600))
           } else {
             setTimeMs(t => { setBestMs(b => b === null ? t : Math.min(b, t)); return t })
             setPhase('done')
@@ -74,13 +78,24 @@ export function Match() {
         setTimeMs(t => t + 1000)
         setSelected(null)
         const wrong = prev.map(c => c.id === card.id || c.id === selected ? { ...c, isWrong: true, isSelected: false } : c)
-        setTimeout(() => setCards(p => p.map(c => ({ ...c, isWrong: false }))), 500)
+        timeoutsRef.current.push(setTimeout(() => setCards(p => p.map(c => ({ ...c, isWrong: false }))), 500))
         return wrong
       }
     })
   }, [selected, batch, words, startBatch])
 
   if (loading) return <div className={styles.loading}>Loading…</div>
+  if (error) return (
+    <div className={styles.center}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        ← Back
+      </button>
+      <div style={{ textAlign: 'center', padding: '80px 24px' }}>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Failed to load words.</p>
+        <button onClick={() => window.location.reload()} style={{ marginTop: 16, background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '24px', padding: '10px 24px', cursor: 'pointer' }}>Retry</button>
+      </div>
+    </div>
+  )
 
   const sec = (timeMs / 1000).toFixed(1)
   const totalBatches = Math.ceil(words.length / 6)

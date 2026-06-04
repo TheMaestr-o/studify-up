@@ -1,20 +1,22 @@
 :root {
-  --bg-base: #0D1136;
-  --bg-surface: #1A1F5E;
-  --bg-card: #232B5E;
-  --bg-elevated: #262D52;
+  --bg-base: #0D1117;
+  --bg-surface: #161B2E;
+  --bg-card: #1E2440;
+  --bg-elevated: #2A3058;
 
   --accent: #4255FF;
   --accent-hover: #3245e8;
   --cta: #FFD000;
-  --cta-text: #0D1136;
+  --cta-text: #0D1117;
 
   --learned: #FF9900;
   --mastered: #23B26D;
 
   --text: #fff;
-  --text-muted: rgba(255,255,255,0.5);
-  --text-dim: rgba(255,255,255,0.3);
+  /* WCAG AA compliant: ~4.5:1 on --bg-card */
+  --text-muted: rgba(255,255,255,0.65);
+  /* Decorative/non-essential text only — does NOT meet WCAG AA */
+  --text-dim: rgba(255,255,255,0.45);
 
   --border: rgba(255,255,255,0.08);
   --border-light: rgba(255,255,255,0.15);
@@ -23,6 +25,7 @@
   --r-sm: 6px;
   --r-md: 10px;
   --r-lg: 16px;
+  --r-xl: 20px;
   --r-pill: 24px;
 
   --sp-1: 4px;
@@ -39,6 +42,16 @@
   --sidebar-w: 64px;
 
   --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Typography scale */
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 15px;
+  --text-md:   17px;
+  --text-lg:   20px;
+  --text-xl:   24px;
+  --text-2xl:  32px;
+  --text-hero: 44px;
 
   --mode-flashcards: #4255FF;
   --mode-learn: #6366F1;
