@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle, Share2 } from 'lucide-react'
+import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle, Share2, Volume2, Star, Pin } from 'lucide-react'
 import { useWords } from '../hooks/useWords'
 import { fetchSetMeta } from '../api/client'
+import { playWord } from '../utils/audio'
 import { STARTER_PACK_ID, STARTER_PACK_NAME, STARTER_WORDS } from '../data/starterPack'
 import { ModeCard } from '../components/ui/ModeCard'
 import { Toast } from '../components/ui/Toast'
@@ -10,12 +11,12 @@ import { Skeleton } from '../components/ui/Skeleton'
 import styles from './SetPage.module.css'
 
 const MODES = [
-  { id: 'flashcards', icon: <Layers size={15} strokeWidth={2} />,       label: 'Flashcards', color: 'var(--mode-flashcards)' },
-  { id: 'learn',      icon: <RefreshCw size={15} strokeWidth={2} />,    label: 'Learn',      color: 'var(--mode-learn)' },
-  { id: 'test',       icon: <ClipboardList size={15} strokeWidth={2} />,label: 'Test',       color: 'var(--mode-test)' },
-  { id: 'blocks',     icon: <Grid3x3 size={15} strokeWidth={2} />,      label: 'Blocks',     color: 'var(--mode-blocks)' },
-  { id: 'blast',      icon: <Zap size={15} strokeWidth={2} />,          label: 'Blast',      color: 'var(--mode-blast)' },
-  { id: 'match',      icon: <Shuffle size={15} strokeWidth={2} />,      label: 'Match',      color: 'var(--mode-match)' },
+  { id: 'flashcards', icon: <Layers size={15} strokeWidth={2} />,        label: 'Flashcards', color: 'var(--mode-flashcards)' },
+  { id: 'learn',      icon: <RefreshCw size={15} strokeWidth={2} />,     label: 'Learn',      color: 'var(--mode-learn)' },
+  { id: 'test',       icon: <ClipboardList size={15} strokeWidth={2} />, label: 'Test',       color: 'var(--mode-test)' },
+  { id: 'blocks',     icon: <Grid3x3 size={15} strokeWidth={2} />,       label: 'Blocks',     color: 'var(--mode-blocks)' },
+  { id: 'blast',      icon: <Zap size={15} strokeWidth={2} />,           label: 'Blast',      color: 'var(--mode-blast)' },
+  { id: 'match',      icon: <Shuffle size={15} strokeWidth={2} />,       label: 'Match',      color: 'var(--mode-match)' },
 ] as const
 
 export function SetPage() {
@@ -30,6 +31,10 @@ export function SetPage() {
   const [toastVisible, setToastVisible] = useState(false)
   const [previewIdx, setPreviewIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
+  const [starred, setStarred] = useState<Set<string>>(() => {
+    try { return new Set(JSON.parse(localStorage.getItem(`starred_${setId}`) ?? '[]')) }
+    catch { return new Set() }
+  })
 
   useEffect(() => {
     if (!setId || isStarter) return
@@ -39,6 +44,16 @@ export function SetPage() {
       .catch(() => setSetName(null))
       .finally(() => setMetaLoading(false))
   }, [setId, isStarter])
+
+  const toggleStar = (wordId: string) => {
+    setStarred(prev => {
+      const next = new Set(prev)
+      if (next.has(wordId)) next.delete(wordId)
+      else next.add(wordId)
+      localStorage.setItem(`starred_${setId}`, JSON.stringify([...next]))
+      return next
+    })
+  }
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
@@ -77,6 +92,7 @@ export function SetPage() {
     : (setName ?? setId?.replace(/^vs-/, '').replace(/-/g, ' ') ?? '')
 
   const isLoggedIn = Boolean(localStorage.getItem('userId') && localStorage.getItem('googleUser'))
+  const previewWord = words[previewIdx]
 
   return (
     <div className={styles.page}>
@@ -86,11 +102,10 @@ export function SetPage() {
           <a href="/login" className={styles.guestCta}>Sign in free →</a>
         </div>
       )}
+
       <div className={styles.header}>
         <h1 className={styles.title}>
-          {displayTitle === null
-            ? <span className={styles.titleSkeleton} />
-            : displayTitle}
+          {displayTitle === null ? <span className={styles.titleSkeleton} /> : displayTitle}
         </h1>
         <button className={styles.shareBtn} onClick={handleShare} title="Copy link">
           <Share2 size={16} strokeWidth={2} />
@@ -111,53 +126,67 @@ export function SetPage() {
         ))}
       </div>
 
+      {/* Preview card */}
       <div className={styles.flashcard}>
         <div className={styles.cardTop}>
-          <span className={styles.hint}>📍 Show hint</span>
+          <span className={styles.hint}>
+            <Pin size={13} strokeWidth={2} color="var(--accent)" /> Show hint
+          </span>
           <div className={styles.cardActions}>
-            <button>🔊</button>
-            <button>⭐</button>
+            {previewWord?.audio_url && (
+              <button
+                className={styles.cardActionBtn}
+                onClick={() => playWord(previewWord.word_en, previewWord.audio_url)}
+                title="Play audio"
+              >
+                <Volume2 size={15} strokeWidth={2} />
+              </button>
+            )}
+            <button
+              className={`${styles.cardActionBtn} ${previewWord && starred.has(previewWord.id) ? styles.starActive : ''}`}
+              onClick={() => previewWord && toggleStar(previewWord.id)}
+              title="Star"
+            >
+              <Star size={15} strokeWidth={2} fill={previewWord && starred.has(previewWord.id) ? 'currentColor' : 'none'} />
+            </button>
           </div>
         </div>
-        <div
-          className={styles.cardBody}
-          onClick={() => setFlipped(f => !f)}
-          style={{ cursor: 'pointer' }}
-        >
-          {flipped
-            ? (words[previewIdx]?.word_uk ?? '—')
-            : (words[previewIdx]?.word_en ?? '—')}
+        <div className={styles.cardBody} onClick={() => setFlipped(f => !f)} style={{ cursor: 'pointer' }}>
+          {flipped ? (previewWord?.word_uk ?? '—') : (previewWord?.word_en ?? '—')}
         </div>
         <div className={styles.cardBottom}>
-          <span className={styles.trackLabel}>Track progress</span>
+          <span className={styles.trackLabel}>Tap card to flip</span>
           <div className={styles.cardNav}>
-            <button
-              className={styles.navBtn}
-              onClick={() => { setPreviewIdx(i => Math.max(0, i - 1)); setFlipped(false) }}
-            >‹</button>
+            <button className={styles.navBtn} onClick={() => { setPreviewIdx(i => Math.max(0, i - 1)); setFlipped(false) }}>‹</button>
             <span>{previewIdx + 1} / {words.length}</span>
-            <button
-              className={styles.navBtn}
-              onClick={() => { setPreviewIdx(i => Math.min(words.length - 1, i + 1)); setFlipped(false) }}
-            >›</button>
+            <button className={styles.navBtn} onClick={() => { setPreviewIdx(i => Math.min(words.length - 1, i + 1)); setFlipped(false) }}>›</button>
           </div>
         </div>
       </div>
 
+      {/* Term list */}
       <div className={styles.termSection}>
-        <div className={styles.termHeader}>
-          <h2>Terms in set ({words.length})</h2>
-        </div>
+        <h2 className={styles.termTitle}>Terms in set ({words.length})</h2>
         {words.map(w => (
           <div key={w.id} className={styles.termCard}>
             <span className={styles.termEn}>{w.word_en}</span>
             <span className={styles.divider}>|</span>
             <span className={styles.termUk}>{w.word_uk ?? '—'}</span>
             <div className={styles.termActions}>
-              {w.audio_url && (
-                <button onClick={() => new Audio(w.audio_url!).play()}>🔊</button>
-              )}
-              <button>⭐</button>
+              <button
+                className={styles.termActionBtn}
+                onClick={() => playWord(w.word_en, w.audio_url)}
+                title="Play audio"
+              >
+                <Volume2 size={14} strokeWidth={2} />
+              </button>
+              <button
+                className={`${styles.termActionBtn} ${starred.has(w.id) ? styles.starActive : ''}`}
+                onClick={() => toggleStar(w.id)}
+                title={starred.has(w.id) ? 'Unstar' : 'Star'}
+              >
+                <Star size={14} strokeWidth={2} fill={starred.has(w.id) ? 'currentColor' : 'none'} />
+              </button>
             </div>
           </div>
         ))}
