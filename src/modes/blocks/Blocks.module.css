@@ -1,7 +1,193 @@
-.page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; text-align: center; }
-.icon { font-size: 48px; }
-.page h2 { font-size: 28px; font-weight: 700; }
-.page p { color: var(--text-muted); font-size: 16px; max-width: 400px; }
-.btn { background: var(--mode-blocks); color: #fff; border-radius: var(--r-pill); padding: 14px 32px; font-size: 16px; font-weight: 600; }
-.btn:hover { opacity: 0.9; }
-.opts { background: var(--bg-elevated); color: var(--text-muted); border-radius: var(--r-pill); padding: 10px 24px; font-size: 14px; border: 1px solid var(--border-light); }
+/* ── Shared ──────────────────────────────────────────────────────────────── */
+.loading { color: var(--text-muted); padding: 40px; text-align: center; }
+.back {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 14px; cursor: pointer; display: flex; align-items: center;
+  gap: 6px; padding: 0;
+}
+.back:hover { color: var(--text); }
+
+/* ── Splash / game-over ──────────────────────────────────────────────────── */
+.splash {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 60vh; gap: 16px; text-align: center;
+  padding: 24px;
+}
+.splashIcon { font-size: 52px; }
+.splash h2 { font-size: 28px; font-weight: 700; margin: 0; }
+.splash p  { color: var(--text-muted); font-size: 15px; max-width: 360px; margin: 0; }
+.finalScore { font-size: 18px; color: var(--text-muted); margin: 0; }
+.finalScore strong { color: var(--cta); font-size: 22px; }
+
+.startBtn {
+  background: var(--mode-blocks); color: #fff;
+  border: none; border-radius: var(--r-pill);
+  padding: 14px 36px; font-size: 16px; font-weight: 600; cursor: pointer;
+  margin-top: 4px;
+}
+.startBtn:hover { opacity: 0.9; }
+
+.backBtn {
+  background: var(--bg-elevated); color: var(--text-muted);
+  border: 1px solid var(--border-light); border-radius: var(--r-pill);
+  padding: 10px 24px; font-size: 14px; cursor: pointer;
+}
+.backBtn:hover { color: var(--text); }
+
+/* ── Game layout ─────────────────────────────────────────────────────────── */
+.game {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 20px; padding: 16px 8px 32px;
+  min-height: 100vh;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────────── */
+.topbar {
+  width: 100%; max-width: 360px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.scoreBox {
+  font-size: 15px; color: var(--text-muted);
+}
+.scoreBox strong { color: var(--cta); font-size: 18px; }
+
+/* ── Board ───────────────────────────────────────────────────────────────── */
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 40px);
+  grid-template-rows: repeat(8, 40px);
+  gap: 2px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 6px;
+  user-select: none;
+}
+
+.cell {
+  width: 40px; height: 40px;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+  transition: background 0.08s, border-color 0.08s;
+  box-sizing: border-box;
+}
+.cell:hover {
+  border-color: rgba(255,255,255,0.15);
+}
+.filled {
+  border-color: rgba(0,0,0,0.2) !important;
+  cursor: default;
+}
+.ghost {
+  border-style: dashed !important;
+  cursor: crosshair;
+}
+
+/* ── Tray ────────────────────────────────────────────────────────────────── */
+.tray {
+  display: flex; gap: 12px; align-items: center; justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 20px;
+  width: 100%; max-width: 360px;
+  box-sizing: border-box;
+}
+
+.traySlot {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 64px;
+  border-radius: var(--r-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  padding: 8px;
+}
+.traySlot:hover:not(.empty) {
+  border-color: var(--border-light);
+  background: rgba(255,255,255,0.04);
+}
+.selected {
+  border-color: var(--accent) !important;
+  background: rgba(66,85,255,0.12) !important;
+}
+.empty { cursor: default; }
+
+/* Mini piece grid inside tray slot */
+.mini {
+  display: grid;
+  gap: 2px;
+}
+.miniCell {
+  width: 12px; height: 12px;
+  border-radius: 2px;
+}
+
+/* ── Hint text ───────────────────────────────────────────────────────────── */
+.hint {
+  font-size: 13px; color: var(--text-dim);
+  margin: 0; text-align: center;
+}
+
+/* ── Question overlay ────────────────────────────────────────────────────── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(13,17,54,0.85);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  padding: 24px;
+}
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-lg);
+  padding: 32px 28px;
+  max-width: 420px; width: 100%;
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+.modalLabel {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-dim);
+  text-align: center;
+}
+
+.modalPrompt {
+  font-size: 26px; font-weight: 700;
+  text-align: center; color: var(--text);
+}
+
+.modalOpts {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modalOpt {
+  background: var(--bg-elevated);
+  border: 2px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px 12px;
+  font-size: 14px; font-weight: 500; color: var(--text);
+  text-align: left; cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.modalOpt:hover:not(:disabled) { border-color: var(--accent); }
+.modalOpt:disabled { opacity: 0.6; cursor: default; }
+
+.optCorrect {
+  border-color: var(--mastered) !important;
+  background: rgba(35,178,109,0.15) !important;
+  color: var(--mastered) !important;
+}
+.optWrong {
+  opacity: 0.4 !important;
+}
+
+.qMsg     { text-align: center; font-size: 14px; color: var(--mastered); font-weight: 600; }
+.qMsgWrong { text-align: center; font-size: 14px; color: var(--learned); }
+.qMsgWrong strong { color: var(--mastered); }
