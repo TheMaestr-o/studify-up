@@ -1,3 +1,4 @@
+import { BookOpen } from 'lucide-react'
 import { useSets } from '../hooks/useSets'
 import { Skeleton } from '../components/ui/Skeleton'
 import styles from './HomePage.module.css'
@@ -36,7 +37,7 @@ export function HomePage() {
 
       {noSets && (
         <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}>📚</div>
+          <div className={styles.emptyIcon}><BookOpen size={48} strokeWidth={1.2} color="rgba(255,255,255,0.2)" /></div>
           <h2>No sets yet</h2>
           <p>Your teacher hasn't assigned any words to your account yet.</p>
           <p className={styles.emptyHint}>
