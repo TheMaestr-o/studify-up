@@ -1,6 +1,7 @@
-import { BookOpen } from 'lucide-react'
+import { BookOpen, Layers, ArrowRight } from 'lucide-react'
 import { useSets } from '../hooks/useSets'
 import { Skeleton } from '../components/ui/Skeleton'
+import { STARTER_PACK_ID, STARTER_PACK_NAME, STARTER_WORDS } from '../data/starterPack'
 import styles from './HomePage.module.css'
 
 export function HomePage() {
@@ -11,6 +12,14 @@ export function HomePage() {
     localStorage.removeItem('userId')
     localStorage.removeItem('googleUser')
     window.location.href = '/login'
+  }
+
+  function linkStudentId() {
+    const id = prompt('Enter your Student ID:')
+    if (id?.trim()) {
+      localStorage.setItem('userId', id.trim())
+      window.location.reload()
+    }
   }
 
   if (loading) return (
@@ -26,7 +35,40 @@ export function HomePage() {
     </div>
   )
 
-  const noSets = !loading && sets.length === 0
+  const noSets = sets.length === 0
+
+  if (noSets) return (
+    <div className={styles.emptyPage}>
+      <button className={styles.signOutTop} onClick={handleSignOut}>Sign out</button>
+
+      <div className={styles.emptyCenter}>
+        <BookOpen size={44} strokeWidth={1.2} color="rgba(255,255,255,0.15)" />
+        <h2 className={styles.emptyTitle}>No sets assigned yet</h2>
+        <p className={styles.emptyText}>Your teacher hasn't assigned any words yet.<br />Meanwhile, start with the free Starter Pack.</p>
+
+        {localStorage.getItem('userId') === '0' && (
+          <button className={styles.linkBtn} onClick={linkStudentId}>
+            + Link Student ID
+          </button>
+        )}
+      </div>
+
+      {/* Starter Pack card */}
+      <div className={styles.starterSection}>
+        <p className={styles.starterLabel}>Start here</p>
+        <a href={`/set/${STARTER_PACK_ID}`} className={styles.starterCard}>
+          <div className={styles.starterIcon}>
+            <Layers size={22} strokeWidth={1.8} color="#fff" />
+          </div>
+          <div className={styles.starterInfo}>
+            <div className={styles.starterName}>{STARTER_PACK_NAME}</div>
+            <div className={styles.starterMeta}>{STARTER_WORDS.length} essential words · Free for everyone</div>
+          </div>
+          <ArrowRight size={18} color="rgba(255,255,255,0.4)" />
+        </a>
+      </div>
+    </div>
+  )
 
   return (
     <div className={styles.page}>
@@ -35,33 +77,15 @@ export function HomePage() {
         <button className={styles.signOut} onClick={handleSignOut}>Sign out</button>
       </div>
 
-      {noSets && (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyIcon}><BookOpen size={48} strokeWidth={1.2} color="rgba(255,255,255,0.2)" /></div>
-          <h2>No sets yet</h2>
-          <p>Your teacher hasn't assigned any words to your account yet.</p>
-          <p className={styles.emptyHint}>
-            Share your Student ID with your teacher:<br />
-            <strong className={styles.userId}>{localStorage.getItem('userId') !== '0' ? localStorage.getItem('userId') : 'Link your Student ID in settings'}</strong>
-          </p>
-          {localStorage.getItem('userId') === '0' && (
-            <button
-              className={styles.linkBtn}
-              onClick={() => {
-                const id = prompt('Enter your Student ID:')
-                if (id?.trim()) {
-                  localStorage.setItem('userId', id.trim())
-                  window.location.reload()
-                }
-              }}
-            >
-              + Link Student ID
-            </button>
-          )}
-        </div>
-      )}
-
+      {/* Always show Starter Pack as first card */}
       <div className={styles.grid}>
+        <a href={`/set/${STARTER_PACK_ID}`} className={`${styles.card} ${styles.cardStarter}`}>
+          <div className={styles.starterBadge}>Free for all</div>
+          <div className={styles.name}>{STARTER_PACK_NAME}</div>
+          <div className={styles.meta}>{STARTER_WORDS.length} terms</div>
+          <div className={styles.lang}>EN</div>
+        </a>
+
         {sets.map(set => (
           <a key={set.id} href={`/set/${set.id}`} className={styles.card}>
             <div className={styles.name}>{set.name}</div>

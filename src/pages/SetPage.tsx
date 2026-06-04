@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle } from 'lucide-react'
 import { useWords } from '../hooks/useWords'
 import { fetchSetMeta } from '../api/client'
+import { STARTER_PACK_ID, STARTER_PACK_NAME, STARTER_WORDS } from '../data/starterPack'
 import { ModeCard } from '../components/ui/ModeCard'
 import { Toast } from '../components/ui/Toast'
 import { Skeleton } from '../components/ui/Skeleton'
@@ -20,21 +21,24 @@ const MODES = [
 export function SetPage() {
   const { setId } = useParams<{ setId: string }>()
   const navigate = useNavigate()
-  const { words, loading } = useWords(setId ?? null)
-  const [setName, setSetName] = useState<string | null>(null)
+  const isStarter = setId === STARTER_PACK_ID
+  const { words: apiWords, loading: apiLoading } = useWords(isStarter ? null : (setId ?? null))
+  const words = isStarter ? STARTER_WORDS : apiWords
+  const loading = isStarter ? false : apiLoading
+  const [setName, setSetName] = useState<string | null>(isStarter ? STARTER_PACK_NAME : null)
   const [metaLoading, setMetaLoading] = useState(false)
   const [toastVisible, setToastVisible] = useState(false)
   const [previewIdx, setPreviewIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
 
   useEffect(() => {
-    if (!setId) return
+    if (!setId || isStarter) return
     setMetaLoading(true)
     fetchSetMeta(setId)
       .then(meta => setSetName(meta.name))
       .catch(() => setSetName(null))
       .finally(() => setMetaLoading(false))
-  }, [setId])
+  }, [setId, isStarter])
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href).then(() => {

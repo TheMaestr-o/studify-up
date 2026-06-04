@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { fetchWords } from '../api/client'
+import { STARTER_PACK_ID, STARTER_WORDS } from '../data/starterPack'
 import type { Word } from '../types'
 
 export function useWords(setId: string | null) {
@@ -9,6 +10,10 @@ export function useWords(setId: string | null) {
 
   useEffect(() => {
     if (!setId) return
+    if (setId === STARTER_PACK_ID) {
+      setWords(STARTER_WORDS)
+      return
+    }
     setLoading(true)
     setError(null)
     fetchWords(setId)
