@@ -100,6 +100,12 @@ export function Learn() {
       {word && (
         <div className={styles.card}>
           <div className={styles.prompt}>{word.word_en}</div>
+          {word.audio_url && (
+            <button
+              className={styles.audio}
+              onClick={() => new Audio(word.audio_url!).play()}
+            >🔊</button>
+          )}
           {qType === 'mc' ? (
             <div className={styles.options}>
               {opts.map(o => (

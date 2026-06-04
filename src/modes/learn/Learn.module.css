@@ -23,3 +23,5 @@
 .wrongMsg strong { color: var(--mastered); }
 .override { background: rgba(255,255,255,0.06); color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 8px 16px; font-size: 13px; }
 .next { background: var(--accent); color: #fff; border-radius: var(--r-pill); padding: 10px 24px; font-size: 14px; font-weight: 600; }
+.audio { background: rgba(255,255,255,0.08); border-radius: 6px; padding: 8px 12px; color: rgba(255,255,255,0.5); font-size: 18px; border: none; cursor: pointer; transition: background 0.15s; }
+.audio:hover { background: rgba(255,255,255,0.14); }
