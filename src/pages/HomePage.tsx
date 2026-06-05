@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { BookOpen, Layers, ArrowRight, Brain, Volume2, Smartphone, Zap, Play } from 'lucide-react'
+import { Layers, ArrowRight, Brain, Volume2, Smartphone, Zap, Play } from 'lucide-react'
 import { useSets } from '../hooks/useSets'
 import { fetchProgress } from '../api/client'
 import { Skeleton } from '../components/ui/Skeleton'
@@ -253,7 +253,7 @@ export function HomePage() {
         </div>
 
         <div className={styles.emptyBlock}>
-          <BookOpen size={44} strokeWidth={1.2} color="rgba(255,255,255,0.15)" />
+          <div className={styles.emptyIcon}>📚</div>
           <h2 className={styles.emptyTitle}>
             {error ? 'Could not load your sets' : 'No teacher sets yet'}
           </h2>
@@ -262,7 +262,7 @@ export function HomePage() {
               ? 'Check your connection and try again.'
               : 'Your teacher may not have assigned words yet — or your Student ID might be wrong.'}
           </p>
-          <a href={`/set/${STARTER_PACK_ID}`} className={styles.emptyCta}>
+          <a href={`/set/${STARTER_PACK_ID}`} className={styles.emptyCta} aria-label="Open Starter Pack">
             Open Starter Pack <ArrowRight size={16} strokeWidth={2} />
           </a>
           <p className={styles.emptyHint}>

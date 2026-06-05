@@ -4,8 +4,14 @@ const BASE = import.meta.env.VITE_API_URL ?? 'https://english-bot.ohnedan.worker
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(BASE + path, init)
-  if (!res.ok) throw new Error(`API ${res.status}: ${path}`)
-  return res.json() as Promise<T>
+  const data = await res.json() as Record<string, unknown> & { error?: string }
+
+  if (!res.ok) {
+    const errorMsg = data?.error || `API ${res.status}`
+    throw new Error(errorMsg)
+  }
+
+  return data as T
 }
 
 export const fetchSets = (studentId: number) =>
@@ -30,8 +36,17 @@ export const fetchProgress = (userId: number, setId: string) =>
   apiFetch<WordProgress[]>(`/user/${userId}/progress?set_id=${encodeURIComponent(setId)}`)
 
 export const saveReview = (userId: number, review: ReviewPayload) =>
-  apiFetch<void>(`/user/${userId}/review`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(review),
-  })
+  apiFetch<{ success: boolean; nextReviewDate: string; masteryLevel: string; stats: { correct_count: number; attempt_count: number; accuracy: string } }>(
+    '/api/progress',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        set_id: review.setId,
+        word_id: review.wordId,
+        student_id: userId,
+        correct: review.correct,
+        responseTimeMs: review.responseTimeMs,
+      }),
+    }
+  )

@@ -10,8 +10,43 @@
   font-size: 14px;
   font-weight: 500;
   z-index: 9999;
-  pointer-events: none;
+  pointer-events: auto;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.message {
+  white-space: nowrap;
+}
+
+.actionBtn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s ease;
+}
+
+.actionBtn:hover {
+  opacity: 0.9;
+}
+
+.actionBtn:active {
+  opacity: 0.8;
 }
 
 .in {

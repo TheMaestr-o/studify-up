@@ -57,6 +57,11 @@
 
 .screenshotBtn:hover {
   background: var(--accent-hover);
+  transform: scale(1.02);
+}
+
+.screenshotBtn:active {
+  transform: scale(0.98);
 }
 
 /* Auth required */
@@ -171,6 +176,11 @@
 
 .createSetBtn:hover {
   background: var(--accent-hover);
+  transform: scale(1.02);
+}
+
+.createSetBtn:active {
+  transform: scale(0.98);
 }
 
 /* Section */
@@ -188,24 +198,32 @@
 }
 
 .emptyStateBox {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(66, 85, 255, 0.05) 100%);
+  border: 1px solid rgba(66, 85, 255, 0.2);
   border-radius: var(--r-lg);
-  padding: 40px 24px;
+  padding: 60px 24px;
   text-align: center;
 }
 
+.emptyIcon {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 16px;
+  display: block;
+}
+
 .emptyMessage {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   color: var(--text);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .emptyHint {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-muted);
   margin-bottom: 20px;
+  line-height: 1.6;
 }
 
 .createSetBtnSecondary {
@@ -295,7 +313,13 @@
 
 .iconBtn:hover {
   color: var(--text);
-  background: rgba(66, 85, 255, 0.08);
+  background: rgba(66, 85, 255, 0.12);
+  transform: scale(1.1);
+  transition: all 0.15s ease;
+}
+
+.iconBtn:active {
+  transform: scale(0.95);
 }
 
 /* Set content (expanded) */
@@ -381,6 +405,11 @@
 
 .addWordBtn:hover {
   background: rgba(66, 85, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.addWordBtn:active {
+  transform: translateY(0);
 }
 
 /* Modal */

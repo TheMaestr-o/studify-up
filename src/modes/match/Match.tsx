@@ -5,6 +5,8 @@ import { useWords } from '../../hooks/useWords'
 import styles from './Match.module.css'
 import type { MatchCard } from '../../types'
 import { shuffleArray } from '../../utils/shuffle'
+import { saveReview } from '../../api/client'
+import { getLinkedStudentId } from '../../utils/auth'
 
 function makeBatch(words: { id: string; word_en: string; word_uk: string | null }[], batchIdx: number): MatchCard[] {
   const slice = words.slice(batchIdx * 6, batchIdx * 6 + 6)
@@ -59,6 +61,10 @@ export function Match() {
       const sel = prev.find(c => c.id === selected)!
       if (card.wordId === sel.wordId && card.type !== sel.type) {
         const matchedWordId = card.wordId
+        const userId = getLinkedStudentId()
+        if (userId) {
+          saveReview(userId, { setId: setId!, wordId: matchedWordId, correct: true, responseTimeMs: 2000 })
+        }
         const next = prev.map(c => c.wordId === matchedWordId ? { ...c, isMatched: true, isSelected: false } : c)
         timeoutsRef.current.push(setTimeout(() => {
           setCards(p => p.map(c => c.wordId === matchedWordId ? { ...c, isGone: true } : c))

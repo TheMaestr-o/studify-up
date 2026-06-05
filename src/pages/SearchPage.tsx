@@ -58,7 +58,9 @@ export function SearchPage() {
         </div>
       ) : !hasResults ? (
         <div className={styles.empty}>
-          No sets found for &ldquo;{query}&rdquo;
+          <div className={styles.emptyIcon}>🔍</div>
+          <div>No matches found for <strong>&ldquo;{query}&rdquo;</strong></div>
+          <p className={styles.emptyHint}>Try searching with different keywords or browse all sets</p>
         </div>
       ) : (
         <div className={styles.grid}>

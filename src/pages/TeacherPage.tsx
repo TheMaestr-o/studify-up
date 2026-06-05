@@ -45,6 +45,11 @@ export function TeacherPage() {
   const [editingWordId, setEditingWordId] = useState<string | null>(null)
   const [editingWord, setEditingWord] = useState<Word | null>(null)
 
+  // Loading states
+  const [isAdding, setIsAdding] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+
   // Screenshot state
   const [showScreenshotModal, setShowScreenshotModal] = useState(false)
   const [selectedSetId, setSelectedSetId] = useState<string | null>(null)
@@ -136,26 +141,161 @@ export function TeacherPage() {
   // Add word to set
   const handleAddWord = async () => {
     if (!newWord.word_en.trim() || !currentSetIdForWord) return
-    // TODO: Call backend API to add word
-    alert(`Word would be added. Backend endpoint needed: POST /vocab-sets/${currentSetIdForWord}/words`)
-    setNewWord({ word_en: '', word_uk: '' })
-    setShowAddWordModal(false)
+
+    setIsAdding(true)
+    try {
+      const response = await fetch('https://english-bot.gssdarm.workers.dev/vocab-words', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          set_id: currentSetIdForWord,
+          word_en: newWord.word_en.trim(),
+          word_uk: newWord.word_uk.trim() || null,
+        }),
+      })
+
+      if (!response.ok) {
+        const err = await response.json()
+        setToastMessage(`Error: ${err.error || 'Failed to add word'}`)
+        setShowToast(true)
+        setTimeout(() => setShowToast(false), 4000)
+        return
+      }
+
+      const addedWord = await response.json()
+
+      // Update local words state
+      setSetWords(prev => ({
+        ...prev,
+        [currentSetIdForWord]: [...(prev[currentSetIdForWord] || []), addedWord],
+      }))
+
+      // Update set word count
+      setSets(prev =>
+        prev.map(s =>
+          s.id === currentSetIdForWord
+            ? { ...s, word_count: (s.word_count ?? 0) + 1 }
+            : s
+        )
+      )
+
+      setToastMessage('Word added successfully!')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
+
+      setNewWord({ word_en: '', word_uk: '' })
+      setShowAddWordModal(false)
+    } catch (err) {
+      console.error('Add word error:', err)
+      setToastMessage('Failed to add word')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 4000)
+    } finally {
+      setIsAdding(false)
+    }
   }
 
   // Edit word
   const handleEditWord = async () => {
-    if (!editingWord || !currentSetIdForWord) return
-    // TODO: Call backend API to update word
-    alert(`Word would be updated. Backend endpoint needed: PATCH /vocab-words/${editingWord.id}`)
-    setEditingWord(null)
-    setEditingWordId(null)
+    if (!editingWord || !editingWordId) return
+
+    setIsEditing(true)
+    try {
+      const response = await fetch(`https://english-bot.gssdarm.workers.dev/vocab-words/${editingWordId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          word_en: editingWord.word_en.trim(),
+          word_uk: editingWord.word_uk?.trim() || null,
+        }),
+      })
+
+      if (!response.ok) {
+        const err = await response.json()
+        setToastMessage(`Error: ${err.error || 'Failed to update word'}`)
+        setShowToast(true)
+        setTimeout(() => setShowToast(false), 4000)
+        return
+      }
+
+      const updatedWord = await response.json()
+
+      // Update local words state
+      setSetWords(prev => {
+        const setId = Object.keys(prev).find(id =>
+          prev[id].some(w => w.id === editingWordId)
+        )
+        if (!setId) return prev
+
+        return {
+          ...prev,
+          [setId]: prev[setId].map(w => (w.id === editingWordId ? updatedWord : w)),
+        }
+      })
+
+      setToastMessage('Word updated successfully!')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
+
+      setEditingWord(null)
+      setEditingWordId(null)
+    } catch (err) {
+      console.error('Edit word error:', err)
+      setToastMessage('Failed to update word')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 4000)
+    } finally {
+      setIsEditing(false)
+    }
   }
 
   // Delete word
   const handleDeleteWord = async (wordId: string) => {
     if (!confirm('Are you sure you want to delete this word?')) return
-    // TODO: Call backend API to delete word
-    alert(`Word would be deleted. Backend endpoint needed: DELETE /vocab-words/${wordId}`)
+
+    setIsDeleting(wordId)
+    try {
+      const response = await fetch(`https://english-bot.gssdarm.workers.dev/vocab-words/${wordId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      if (!response.ok) {
+        const err = await response.json()
+        setToastMessage(`Error: ${err.error || 'Failed to delete word'}`)
+        setShowToast(true)
+        setTimeout(() => setShowToast(false), 4000)
+        return
+      }
+
+      // Remove from local state
+      setSetWords(prev => {
+        const updated: Record<string, Word[]> = {}
+        for (const setId in prev) {
+          updated[setId] = prev[setId].filter(w => w.id !== wordId)
+        }
+        return updated
+      })
+
+      // Update set word count
+      setSets(prev =>
+        prev.map(s => ({
+          ...s,
+          word_count: Math.max(0, (s.word_count ?? 0) - 1),
+        }))
+      )
+
+      setToastMessage('Word deleted successfully!')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
+    } catch (err) {
+      console.error('Delete word error:', err)
+      setToastMessage('Failed to delete word')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 4000)
+    } finally {
+      setIsDeleting(null)
+    }
   }
 
   const openAddWordModal = (setId: string) => {
@@ -379,8 +519,13 @@ export function TeacherPage() {
                                 className={styles.iconBtn}
                                 onClick={() => handleDeleteWord(word.id)}
                                 title="Delete word"
+                                disabled={isDeleting === word.id}
                               >
-                                <Trash2 size={14} strokeWidth={2} />
+                                {isDeleting === word.id ? (
+                                  <Loader size={14} strokeWidth={2} className={styles.spinnerIcon} />
+                                ) : (
+                                  <Trash2 size={14} strokeWidth={2} />
+                                )}
                               </button>
                             </div>
                           </div>
@@ -461,15 +606,23 @@ export function TeacherPage() {
               <button
                 className={styles.cancelBtn}
                 onClick={closeAddWordModal}
+                disabled={isAdding}
               >
                 Cancel
               </button>
               <button
                 className={styles.submitBtn}
                 onClick={handleAddWord}
-                disabled={!newWord.word_en.trim()}
+                disabled={!newWord.word_en.trim() || isAdding}
               >
-                Add
+                {isAdding ? (
+                  <>
+                    <Loader size={16} strokeWidth={2} className={styles.spinnerIcon} />
+                    Adding...
+                  </>
+                ) : (
+                  'Add'
+                )}
               </button>
             </div>
           </div>
@@ -508,15 +661,23 @@ export function TeacherPage() {
               <button
                 className={styles.cancelBtn}
                 onClick={closeEditWordModal}
+                disabled={isEditing}
               >
                 Cancel
               </button>
               <button
                 className={styles.submitBtn}
                 onClick={handleEditWord}
-                disabled={!editingWord.word_en.trim()}
+                disabled={!editingWord.word_en.trim() || isEditing}
               >
-                Save
+                {isEditing ? (
+                  <>
+                    <Loader size={16} strokeWidth={2} className={styles.spinnerIcon} />
+                    Saving...
+                  </>
+                ) : (
+                  'Save'
+                )}
               </button>
             </div>
           </div>

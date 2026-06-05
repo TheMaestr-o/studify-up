@@ -117,13 +117,13 @@ export function SetPage() {
             </div>
           </div>
           <div className={styles.headerIcons}>
-            <button className={styles.headerIconBtn} title="Save">
+            <button className={styles.headerIconBtn} title="Save" aria-label="Save set">
               <Bookmark size={18} strokeWidth={2} />
             </button>
-            <button className={styles.headerIconBtn} title="Groups">
+            <button className={styles.headerIconBtn} title="Groups" aria-label="View study groups">
               <Users size={18} strokeWidth={2} />
             </button>
-            <button className={styles.headerIconBtn} onClick={handleShare} title="Share">
+            <button className={styles.headerIconBtn} onClick={handleShare} title="Share" aria-label="Share set link">
               <Share2 size={18} strokeWidth={2} />
             </button>
           </div>
@@ -185,29 +185,38 @@ export function SetPage() {
       {/* Term list */}
       <div className={styles.termSection}>
         <h2 className={styles.termTitle}>Terms in set ({words.length})</h2>
-        {words.map(w => (
-          <div key={w.id} className={styles.termCard}>
-            <span className={styles.termEn}>{w.word_en}</span>
-            <span className={styles.divider}>|</span>
-            <span className={styles.termUk}>{w.word_uk ?? '—'}</span>
-            <div className={styles.termActions}>
-              <button
-                className={styles.termActionBtn}
-                onClick={() => playWord(w.word_en, w.audio_url)}
-                title="Play audio"
-              >
-                <Volume2 size={14} strokeWidth={2} />
-              </button>
-              <button
-                className={`${styles.termActionBtn} ${starred.has(w.id) ? styles.starActive : ''}`}
-                onClick={() => toggleStar(w.id)}
-                title={starred.has(w.id) ? 'Unstar' : 'Star'}
-              >
-                <Star size={14} strokeWidth={2} fill={starred.has(w.id) ? 'currentColor' : 'none'} />
-              </button>
-            </div>
+        {words.length === 0 ? (
+          <div className={styles.emptyTermsBox}>
+            <div className={styles.emptyTermsIcon}>📝</div>
+            <p className={styles.emptyTermsMessage}>No words added yet</p>
           </div>
-        ))}
+        ) : (
+          words.map(w => (
+            <div key={w.id} className={styles.termCard}>
+              <span className={styles.termEn}>{w.word_en}</span>
+              <span className={styles.divider}>|</span>
+              <span className={styles.termUk}>{w.word_uk ?? '—'}</span>
+              <div className={styles.termActions}>
+                <button
+                  className={styles.termActionBtn}
+                  onClick={() => playWord(w.word_en, w.audio_url)}
+                  title="Play audio"
+                  aria-label={`Play audio for ${w.word_en}`}
+                >
+                  <Volume2 size={14} strokeWidth={2} />
+                </button>
+                <button
+                  className={`${styles.termActionBtn} ${starred.has(w.id) ? styles.starActive : ''}`}
+                  onClick={() => toggleStar(w.id)}
+                  title={starred.has(w.id) ? 'Unstar' : 'Star'}
+                  aria-label={starred.has(w.id) ? `Unstar ${w.word_en}` : `Star ${w.word_en}`}
+                >
+                  <Star size={14} strokeWidth={2} fill={starred.has(w.id) ? 'currentColor' : 'none'} />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <Toast message="Copied!" visible={toastVisible} />

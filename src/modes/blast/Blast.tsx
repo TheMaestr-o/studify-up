@@ -4,6 +4,8 @@ import { ChevronLeft } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import styles from './Blast.module.css'
 import type { Word } from '../../types'
+import { saveReview } from '../../api/client'
+import { getLinkedStudentId } from '../../utils/auth'
 
 const SKINS = ['🚀', '🛸', '🛩️', '✈️']
 
@@ -26,6 +28,7 @@ interface Asteroid {
 interface GameQuestion {
   prompt: string
   correctAnswer: string
+  wordId: string
 }
 
 interface GameState {
@@ -73,7 +76,7 @@ function buildQuestion(words: Word[]): { q: GameQuestion; answers: string[] } | 
     distractors.push(correctAnswer + ' ?')
   }
   const answers = [correctAnswer, ...distractors].sort(() => Math.random() - 0.5)
-  return { q: { prompt, correctAnswer }, answers }
+  return { q: { prompt, correctAnswer, wordId: word.id }, answers }
 }
 
 function spawnAsteroid(
@@ -462,6 +465,14 @@ export function Blast() {
       const cy = e.clientY - rect.top
       const hit = g.asteroids.find(a => Math.hypot(a.x - cx, a.y - cy) < a.radius)
       if (!hit) return
+
+      const currentQuestion = g.currentQ
+      if (currentQuestion) {
+        const userId = getLinkedStudentId()
+        if (userId) {
+          saveReview(userId, { setId: setId!, wordId: currentQuestion.wordId, correct: hit.isCorrect, responseTimeMs: 1000 })
+        }
+      }
 
       if (hit.isCorrect) {
         g.streak++

@@ -4,6 +4,8 @@ import { ChevronLeft, LayoutGrid, Check, X, Zap } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import type { Word } from '../../types'
 import styles from './Blocks.module.css'
+import { saveReview } from '../../api/client'
+import { getLinkedStudentId } from '../../utils/auth'
 
 // ─── Piece library ────────────────────────────────────────────────────────────
 
@@ -208,6 +210,10 @@ export function Blocks() {
     if (!question || qFeedback) return
     const ok = answer === question.correct
     setQFeedback(ok ? 'correct' : 'wrong')
+    const userId = getLinkedStudentId()
+    if (userId) {
+      saveReview(userId, { setId: setId!, wordId: question.word.id, correct: ok, responseTimeMs: 1000 })
+    }
     const timeoutId = window.setTimeout(() => {
       const newTray = randomPieces(3)
       setTray(newTray)
