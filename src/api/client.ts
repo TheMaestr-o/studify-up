@@ -81,3 +81,105 @@ export const submitImport = (
       }),
     }
   )
+
+export interface WordStatsItem {
+  id: string
+  word_en: string
+  word_uk: string | null
+  attempt_count: number
+  error_count: number
+  mastery_pct: number
+  avg_days: number
+}
+
+export interface StudentStatsItem {
+  student_id: number
+  username: string | null
+  first_name: string
+  total_reviews: number
+  correct: number
+  accuracy_pct: number
+}
+
+export interface OverallStatsData {
+  total_students: number
+  avg_mastery_pct: number
+  avg_attempts: number
+}
+
+export interface AnalyticsData {
+  word_stats: WordStatsItem[]
+  student_stats: StudentStatsItem[]
+  overall_stats: OverallStatsData
+}
+
+export interface WordDetailData {
+  struggling_students: Array<{
+    student_id: number
+    username: string | null
+    first_name: string
+    attempts: number
+    correct: number
+    accuracy_pct: number
+  }>
+}
+
+export const fetchAnalytics = (setId: string) =>
+  apiFetch<AnalyticsData>(`/analytics/set/${encodeURIComponent(setId)}`)
+
+export const fetchWordDetail = (wordId: string) =>
+  apiFetch<WordDetailData>(`/analytics/word/${encodeURIComponent(wordId)}`)
+
+export const exportAnalytics = (setId: string) =>
+  fetch(`${BASE}/analytics/export/${encodeURIComponent(setId)}`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+  })
+
+export interface DashboardStats {
+  total: number
+  mastered: number
+  reviewing: number
+  new: number
+}
+
+export interface RetentionDataPoint {
+  day: string
+  retention_pct: number
+}
+
+export interface NextReview {
+  id: string
+  word_en: string
+  word_uk: string | null
+  next_review_date: string
+  status: 'due_now' | 'due_tomorrow' | 'due_later'
+}
+
+export interface MasteryDataPoint {
+  start_day: string
+  newly_mastered: number
+  total_reviewed: number
+  cumulative_mastered: number
+}
+
+export interface HeatmapDay {
+  date: string
+  count: number
+  difficulty: 'easy' | 'medium' | 'hard'
+}
+
+export const fetchDashboardStats = (studentId: number) =>
+  apiFetch<DashboardStats>(`/dashboard/stats/${studentId}`)
+
+export const fetchDashboardRetention = (studentId: number) =>
+  apiFetch<RetentionDataPoint[]>(`/dashboard/retention/${studentId}`)
+
+export const fetchDashboardNextReviews = (studentId: number, limit = 20) =>
+  apiFetch<NextReview[]>(`/dashboard/next-reviews/${studentId}?limit=${limit}`)
+
+export const fetchDashboardMasteryTimeline = (studentId: number) =>
+  apiFetch<MasteryDataPoint[]>(`/dashboard/mastery-timeline/${studentId}`)
+
+export const fetchDashboardHeatmap = (studentId: number) =>
+  apiFetch<HeatmapDay[]>(`/dashboard/heatmap/${studentId}`)

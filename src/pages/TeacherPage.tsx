@@ -416,14 +416,23 @@ export function TeacherPage() {
             <div className={styles.userEmail}>{googleUser.email}</div>
           </div>
         </div>
-        <button
-          className={styles.createSetBtn}
-          onClick={() => setShowCreateModal(true)}
-          title="Create new vocabulary set"
-        >
-          <Plus size={18} strokeWidth={2} />
-          New Set
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            className={styles.analyticsBtn}
+            onClick={() => navigate('/analytics')}
+            title="View analytics dashboard"
+          >
+            📊 Analytics
+          </button>
+          <button
+            className={styles.createSetBtn}
+            onClick={() => setShowCreateModal(true)}
+            title="Create new vocabulary set"
+          >
+            <Plus size={18} strokeWidth={2} />
+            New Set
+          </button>
+        </div>
       </div>
 
       {/* Sets List */}
