@@ -210,7 +210,7 @@ export function TeacherPage() {
         <div className={styles.headerTop}>
           <div>
             <h1 className={styles.title}>Teacher Panel</h1>
-            <p className={styles.subtitle}>Manage your vocabulary sets</p>
+            <p className={styles.subtitle}>Create and manage English-Ukrainian vocabulary sets</p>
           </div>
           {sets.length > 0 && (
             <button
@@ -247,6 +247,7 @@ export function TeacherPage() {
         <button
           className={styles.createSetBtn}
           onClick={() => setShowCreateModal(true)}
+          title="Create new vocabulary set"
         >
           <Plus size={18} strokeWidth={2} />
           New Set
@@ -261,13 +262,7 @@ export function TeacherPage() {
         ) : sets.length === 0 ? (
           <div className={styles.emptyStateBox}>
             <p className={styles.emptyMessage}>No vocabulary sets yet.</p>
-            <p className={styles.emptyHint}>Create one to get started!</p>
-            <button
-              className={styles.createSetBtnSecondary}
-              onClick={() => setShowCreateModal(true)}
-            >
-              Create New Set
-            </button>
+            <p className={styles.emptyHint}>Create a set of English-Ukrainian words to get started. Click <strong>"+ New Set"</strong> above to create one.</p>
           </div>
         ) : (
           <div className={styles.setsList}>
