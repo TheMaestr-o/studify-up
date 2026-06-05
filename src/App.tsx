@@ -7,6 +7,7 @@ import { SetPage } from './pages/SetPage'
 import { SearchPage } from './pages/SearchPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { TeacherPage } from './pages/TeacherPage'
+import { ImportPage } from './pages/ImportPage'
 import { Flashcards } from './modes/flashcards/Flashcards'
 import { Match } from './modes/match/Match'
 import { Learn } from './modes/learn/Learn'
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/teacher" element={<TeacherPage />} />
+        <Route path="/import" element={<ImportPage />} />
       </Route>
     </Routes>
   )

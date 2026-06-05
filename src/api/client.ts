@@ -63,3 +63,21 @@ export const saveReview = (userId: number, review: ReviewPayload) =>
       }),
     }
   )
+
+export const submitImport = (
+  setName: string,
+  language: string,
+  words: Array<{ word_en: string; word_uk: string }>
+) =>
+  apiFetch<{ setId: string; importedCount: number; skippedCount: number }>(
+    '/import',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        set_name: setName,
+        language,
+        words,
+      }),
+    }
+  )

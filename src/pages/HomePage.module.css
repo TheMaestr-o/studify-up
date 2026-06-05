@@ -15,6 +15,19 @@
 }
 .signOut:hover { color: var(--text); background: var(--border); }
 
+.importBtn {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 600; color: #fff;
+  background: var(--accent); padding: 10px 16px;
+  border-radius: var(--r-md); text-decoration: none;
+  transition: all 0.2s;
+  animation: fadeInRight 0.6s ease;
+}
+.importBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 85, 255, 0.3);
+}
+
 /* Sections */
 .section { margin-bottom: 36px; }
 .sectionHeader { margin-bottom: 16px; }

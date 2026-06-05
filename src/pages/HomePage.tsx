@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Layers, ArrowRight, Brain, Volume2, Smartphone, Zap, Play } from 'lucide-react'
+import { Layers, ArrowRight, Brain, Volume2, Smartphone, Zap, Play, Download } from 'lucide-react'
 import { useSets } from '../hooks/useSets'
 import { fetchProgress } from '../api/client'
 import { Skeleton } from '../components/ui/Skeleton'
@@ -282,7 +282,13 @@ export function HomePage() {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Your Sets</h1>
+        <div>
+          <h1 className={styles.title}>Your Sets</h1>
+        </div>
+        <Link to="/import" className={styles.importBtn} title="Import from Quizlet">
+          <Download size={18} strokeWidth={2} />
+          Import
+        </Link>
       </div>
 
       <ContinueStudyingSection sets={sets} studentId={studentId} />
