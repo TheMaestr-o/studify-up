@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus } from 'lucide-react'
+import { Search, Plus, BookOpen } from 'lucide-react'
 import { getGoogleUser, isLinkedAccount } from '../../utils/auth'
 import styles from './Topbar.module.css'
 
@@ -41,6 +41,15 @@ export function Topbar() {
         <button className={styles.create} title="Coming soon" disabled>
           <Plus size={18} strokeWidth={2} />
         </button>
+        {linked && (
+          <button
+            className={styles.teacherBtn}
+            onClick={() => navigate('/teacher')}
+            title="Teacher Panel"
+          >
+            <BookOpen size={18} strokeWidth={2} />
+          </button>
+        )}
         <div
           className={styles.avatar}
           onClick={() => navigate(linked ? '/profile' : '/login')}

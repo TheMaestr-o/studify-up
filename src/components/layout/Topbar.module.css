@@ -40,6 +40,13 @@
   display: flex; align-items: center; justify-content: center;
 }
 .create:hover { background: rgba(255,255,255,0.15); }
+.teacherBtn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: rgba(255,255,255,0.08); color: var(--text); font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; cursor: pointer; transition: background 0.15s;
+}
+.teacherBtn:hover { background: rgba(255,255,255,0.15); }
 .cta {
   background: var(--cta); color: var(--cta-text);
   border-radius: var(--r-pill); padding: 8px 18px;
