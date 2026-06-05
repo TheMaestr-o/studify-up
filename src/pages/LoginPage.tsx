@@ -33,7 +33,7 @@ export function LoginPage() {
   const [studentId, setStudentId] = useState('')
   const [googleFailed, setGoogleFailed] = useState(!GOOGLE_WORKS)
   const [name, setName] = useState('')
-  const [autoFilled, setAutoFilled] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
     if (!GOOGLE_WORKS) setGoogleFailed(true)
@@ -45,49 +45,67 @@ export function LoginPage() {
     if (savedId) setStudentId(String(savedId))
   }, [])
 
-  useEffect(() => {
-    if (googleUser?.email) {
-      autoFillStudentId(googleUser.email)
-    }
-  }, [googleUser?.email])
 
   function proceedHome(user: GoogleUser, id: string) {
     if (!finishLogin(user, id)) return
     window.location.href = '/'
   }
 
-  function handleGoogleSuccess(credentialResponse: { credential?: string }) {
+  async function handleGoogleSuccess(credentialResponse: { credential?: string }) {
     const credential = credentialResponse.credential
     if (!credential) return
     const payload = decodeJwt(credential)
     const user = { name: payload.name ?? '', email: payload.email ?? '', picture: payload.picture ?? '' }
-    setGoogleUser(user)
 
+    setIsProcessing(true)
+
+    // Check if this Google email already has a Student ID
     const existing = getLinkedStudentId()
     if (existing) {
       proceedHome(user, String(existing))
+      setIsProcessing(false)
+      return
     }
+
+    // Try to fetch existing Student ID from backend
+    try {
+      const checkRes = await fetch(`https://english-bot.ohnedan.workers.dev/api/student-id?email=${encodeURIComponent(user.email)}`)
+      const checkData = await checkRes.json()
+      if (checkData.studentId) {
+        proceedHome(user, String(checkData.studentId))
+        setIsProcessing(false)
+        return
+      }
+    } catch (e) {
+      console.error('Error checking for existing Student ID:', e)
+    }
+
+    // No existing Student ID, auto-create one
+    try {
+      const autoRes = await fetch('https://english-bot.ohnedan.workers.dev/api/auth/auto-assign-student-id', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ googleEmail: user.email }),
+      })
+      const autoData = await autoRes.json()
+      if (autoData.studentId) {
+        proceedHome(user, String(autoData.studentId))
+        setIsProcessing(false)
+        return
+      }
+    } catch (e) {
+      console.error('Error auto-assigning Student ID:', e)
+    }
+
+    // Fallback: show form if both checks failed
+    setGoogleUser(user)
+    setIsProcessing(false)
   }
 
   function handleGoogleError() {
     setGoogleFailed(true)
   }
 
-  async function autoFillStudentId(email: string) {
-    try {
-      const res = await fetch(`https://english-bot.ohnedan.workers.dev/api/student-id?email=${encodeURIComponent(email)}`)
-      const data = await res.json()
-      if (data.studentId) {
-        setStudentId(String(data.studentId))
-        setAutoFilled(true)
-        return true
-      }
-    } catch (e) {
-      console.error('Error fetching student ID:', e)
-    }
-    setAutoFilled(false)
-    return false
-  }
 
   function handleLink(e: React.FormEvent) {
     e.preventDefault()
@@ -101,7 +119,7 @@ export function LoginPage() {
     window.location.href = `/set/${STARTER_PACK_ID}`
   }
 
-  const showStudentForm = googleFailed || !!googleUser
+  const showStudentForm = googleFailed
 
   return (
     <div className={styles.screen}>
@@ -190,9 +208,8 @@ export function LoginPage() {
                 onChange={e => setStudentId(e.target.value.replace(/\D/g, ''))}
                 autoFocus
               />
-              {autoFilled && <p className={styles.hint}>✅ Found linked Student ID</p>}
-              <button className={styles.linkButton} type="submit" disabled={!studentId.trim()}>
-                Start studying <ChevronRight size={14} strokeWidth={2} />
+              <button className={styles.linkButton} type="submit" disabled={!studentId.trim() || isProcessing}>
+                {isProcessing ? 'Processing...' : 'Start studying'} {!isProcessing && <ChevronRight size={14} strokeWidth={2} />}
               </button>
               <button type="button" className={styles.skipButton} onClick={handleBrowseGuest}>
                 Browse without signing in
