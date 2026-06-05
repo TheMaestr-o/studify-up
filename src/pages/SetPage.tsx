@@ -5,6 +5,7 @@ import { useWords } from '../hooks/useWords'
 import { fetchSetMeta } from '../api/client'
 import { playWord } from '../utils/audio'
 import { STARTER_PACK_ID, STARTER_PACK_NAME, STARTER_WORDS } from '../data/starterPack'
+import { isLinkedAccount } from '../utils/auth'
 import { ModeCard } from '../components/ui/ModeCard'
 import { Toast } from '../components/ui/Toast'
 import { Skeleton } from '../components/ui/Skeleton'
@@ -91,7 +92,7 @@ export function SetPage() {
     ? null
     : (setName ?? setId?.replace(/^vs-/, '').replace(/-/g, ' ') ?? '')
 
-  const isLoggedIn = Boolean(localStorage.getItem('userId') && localStorage.getItem('googleUser'))
+  const isLoggedIn = isLinkedAccount()
   const previewWord = words[previewIdx]
 
   return (

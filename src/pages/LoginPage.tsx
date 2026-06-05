@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { GoogleLogin } from '@react-oauth/google'
 import { Layers, Brain, Volume2, Smartphone, GraduationCap, Infinity, ChevronRight, User } from 'lucide-react'
+import { STARTER_PACK_ID } from '../data/starterPack'
+import { finishLogin, getLinkedStudentId, isLinkedAccount } from '../utils/auth'
 import styles from './LoginPage.module.css'
 
 function decodeJwt(token: string) {
@@ -32,16 +34,32 @@ export function LoginPage() {
   const [googleFailed, setGoogleFailed] = useState(!GOOGLE_WORKS)
   const [name, setName] = useState('')
 
-  // Detect if we're on production with broken Google OAuth
   useEffect(() => {
     if (!GOOGLE_WORKS) setGoogleFailed(true)
+    if (isLinkedAccount()) {
+      window.location.href = '/'
+      return
+    }
+    const savedId = getLinkedStudentId()
+    if (savedId) setStudentId(String(savedId))
   }, [])
+
+  function proceedHome(user: GoogleUser, id: string) {
+    if (!finishLogin(user, id)) return
+    window.location.href = '/'
+  }
 
   function handleGoogleSuccess(credentialResponse: { credential?: string }) {
     const credential = credentialResponse.credential
     if (!credential) return
     const payload = decodeJwt(credential)
-    setGoogleUser({ name: payload.name ?? '', email: payload.email ?? '', picture: payload.picture ?? '' })
+    const user = { name: payload.name ?? '', email: payload.email ?? '', picture: payload.picture ?? '' }
+    setGoogleUser(user)
+
+    const existing = getLinkedStudentId()
+    if (existing) {
+      proceedHome(user, String(existing))
+    }
   }
 
   function handleGoogleError() {
@@ -51,18 +69,13 @@ export function LoginPage() {
   function handleLink(e: React.FormEvent) {
     e.preventDefault()
     const trimmed = studentId.trim()
-    if (!trimmed) return
+    if (!trimmed || !/^\d+$/.test(trimmed) || Number(trimmed) <= 0) return
     const user = googleUser ?? { name: name.trim() || 'Student', email: '', picture: '' }
-    localStorage.setItem('googleUser', JSON.stringify(user))
-    localStorage.setItem('userId', trimmed)
-    window.location.href = '/'
+    proceedHome(user, trimmed)
   }
 
-  function handleSkip() {
-    const user = googleUser ?? { name: name.trim() || 'Student', email: '', picture: '' }
-    localStorage.setItem('googleUser', JSON.stringify(user))
-    localStorage.setItem('userId', '0')
-    window.location.href = '/'
+  function handleBrowseGuest() {
+    window.location.href = `/set/${STARTER_PACK_ID}`
   }
 
   const showStudentForm = googleFailed || !!googleUser
@@ -71,7 +84,6 @@ export function LoginPage() {
     <div className={styles.screen}>
       <div className={styles.inner}>
 
-        {/* LEFT: Hero */}
         <div className={styles.hero}>
           <div className={styles.badge}>Free Quizlet alternative</div>
           <h1 className={styles.heroTitle}>
@@ -91,7 +103,6 @@ export function LoginPage() {
           </ul>
         </div>
 
-        {/* RIGHT: Sign-in card */}
         <div className={styles.card}>
           <div className={styles.logo}>S</div>
           <h2 className={styles.cardTitle}>Studify Up</h2>
@@ -100,7 +111,6 @@ export function LoginPage() {
           <div className={styles.divider} />
 
           {!showStudentForm ? (
-            /* Step 1: Google sign-in */
             <div className={styles.googleWrap}>
               <p className={styles.signInLabel}>Sign in to get started</p>
               <GoogleLogin
@@ -113,12 +123,14 @@ export function LoginPage() {
               />
               <p className={styles.hint}>Free forever · No credit card needed</p>
               <div className={styles.dividerOr}><span>or</span></div>
-              <button className={styles.noGoogleBtn} onClick={() => setGoogleFailed(true)}>
+              <button type="button" className={styles.noGoogleBtn} onClick={() => setGoogleFailed(true)}>
                 <User size={15} strokeWidth={2} /> Continue with Student ID
+              </button>
+              <button type="button" className={styles.skipButton} onClick={handleBrowseGuest}>
+                Browse Starter Pack without signing in
               </button>
             </div>
           ) : (
-            /* Step 2: Student ID form */
             <form className={styles.step2} onSubmit={handleLink}>
               {googleUser ? (
                 <div className={styles.userRow}>
@@ -144,21 +156,22 @@ export function LoginPage() {
               )}
 
               <p className={styles.step2Title}>Enter your Student ID</p>
-              <p className={styles.hint}>Your teacher will send you this number</p>
+              <p className={styles.hint}>Number from your teacher (Telegram bot)</p>
               <input
                 className={styles.input}
                 type="text"
                 inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder="e.g. 123456789"
                 value={studentId}
-                onChange={e => setStudentId(e.target.value)}
+                onChange={e => setStudentId(e.target.value.replace(/\D/g, ''))}
                 autoFocus
               />
-              <button className={styles.linkButton} type="submit">
+              <button className={styles.linkButton} type="submit" disabled={!studentId.trim()}>
                 Start studying <ChevronRight size={14} strokeWidth={2} />
               </button>
-              <button type="button" className={styles.skipButton} onClick={handleSkip}>
-                Skip for now — explore the app
+              <button type="button" className={styles.skipButton} onClick={handleBrowseGuest}>
+                Browse without signing in
               </button>
             </form>
           )}

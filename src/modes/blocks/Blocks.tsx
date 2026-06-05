@@ -255,6 +255,7 @@ export function Blocks() {
   if (!started) {
     if (loading) return <div className={styles.loading}>Loading…</div>
     if (!words.length) return <div className={styles.loading}>No words in this set.</div>
+    if (words.length < 2) return <div className={styles.loading}>Need at least 2 words to play Blocks.</div>
     return (
       <div className={styles.splash}>
         <button onClick={() => navigate(`/set/${setId}`)} className={styles.back}><ChevronLeft size={14} strokeWidth={2} /> Back to set</button>

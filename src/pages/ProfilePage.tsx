@@ -1,35 +1,46 @@
 import { useState } from 'react'
+import {
+  clearSession,
+  finishLogin,
+  getGoogleUser,
+  getLinkedStudentId,
+} from '../utils/auth'
 import styles from './ProfilePage.module.css'
 
 export function ProfilePage() {
-  const googleUser = JSON.parse(localStorage.getItem('googleUser') ?? 'null') as {
-    name?: string
-    email?: string
-    picture?: string
-  } | null
+  const googleUser = getGoogleUser()
+  const linkedId = getLinkedStudentId()
 
-  const [studentId, setStudentId] = useState(localStorage.getItem('userId') ?? '')
+  const [studentId, setStudentId] = useState(linkedId ? String(linkedId) : '')
   const [editing, setEditing] = useState(false)
   const [editValue, setEditValue] = useState(studentId)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   function handleSignOut() {
-    localStorage.removeItem('userId')
-    localStorage.removeItem('googleUser')
+    clearSession()
     window.location.href = '/login'
   }
 
   function handleEditSave() {
     const trimmed = editValue.trim()
-    if (trimmed) {
-      localStorage.setItem('userId', trimmed)
-      setStudentId(trimmed)
+    if (!trimmed || !/^\d+$/.test(trimmed) || Number(trimmed) <= 0) {
+      setSaveError('Enter a valid numeric Student ID from your teacher.')
+      return
     }
+    const user = googleUser ?? { name: 'Student', email: '', picture: '' }
+    if (!finishLogin(user, trimmed)) {
+      setSaveError('Could not save Student ID.')
+      return
+    }
+    setSaveError(null)
+    setStudentId(trimmed)
     setEditing(false)
+    window.location.href = '/'
   }
 
   function handleEditKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') handleEditSave()
-    if (e.key === 'Escape') setEditing(false)
+    if (e.key === 'Escape') { setEditing(false); setSaveError(null) }
   }
 
   const fallbackLetter = googleUser?.name ? googleUser.name.charAt(0).toUpperCase() : 'U'
@@ -59,18 +70,20 @@ export function ProfilePage() {
 
       <div className={styles.section}>
         <div className={styles.sectionLabel}>Student ID</div>
+        <p className={styles.sectionHint}>Must match your Telegram account (ask your teacher).</p>
         <div className={styles.row}>
           {editing ? (
             <>
               <input
                 className={styles.idInput}
                 value={editValue}
+                inputMode="numeric"
                 autoFocus
-                onChange={e => setEditValue(e.target.value)}
+                onChange={e => { setEditValue(e.target.value.replace(/\D/g, '')); setSaveError(null) }}
                 onKeyDown={handleEditKeyDown}
               />
               <button className={styles.saveBtn} onClick={handleEditSave}>Save</button>
-              <button className={styles.cancelBtn} onClick={() => setEditing(false)}>Cancel</button>
+              <button className={styles.cancelBtn} onClick={() => { setEditing(false); setSaveError(null) }}>Cancel</button>
             </>
           ) : (
             <>
@@ -81,6 +94,7 @@ export function ProfilePage() {
             </>
           )}
         </div>
+        {saveError && <p className={styles.saveError}>{saveError}</p>}
       </div>
 
       <div className={styles.section}>

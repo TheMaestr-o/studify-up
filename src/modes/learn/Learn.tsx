@@ -6,6 +6,7 @@ import styles from './Learn.module.css'
 import type { MasteryLevel } from '../../types'
 import { saveReview } from '../../api/client'
 import { shuffleArray } from '../../utils/shuffle'
+import { getLinkedStudentId } from '../../utils/auth'
 
 function levenshtein(a: string, b: string): number {
   const dp = Array.from({ length: a.length + 1 }, (_, i) =>
@@ -57,7 +58,10 @@ export function Learn() {
     const correct = word.word_uk ?? word.word_en
     const pool = words.filter(w => w.id !== word.id).map(w => w.word_uk ?? w.word_en)
     const distractors = shuffleArray(pool).slice(0, 3)
-    return shuffleArray([correct, ...distractors])
+    const all = shuffleArray([correct, ...distractors])
+    // If there aren't enough distractors for a meaningful MC question, signal typing mode
+    if (all.length < 2) return []
+    return all
   }, [word, words])
 
   const masteredCount = Object.values(mastery).filter(m => m.level === 'mastered').length
@@ -67,9 +71,9 @@ export function Learn() {
     const correct = word.word_uk ?? word.word_en
     const ok = qType === 'mc' ? answer === correct : isAccepted(answer, correct)
     const prev = mastery[word.id] ?? { level: 'not_studied' as MasteryLevel, streak: 0 }
-    const userId = localStorage.getItem('userId')
+    const userId = getLinkedStudentId()
     if (userId) {
-      saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: ok, responseTimeMs: Date.now() - questionStartRef.current })
+      saveReview(userId, { setId: setId!, wordId: word.id, correct: ok, responseTimeMs: Date.now() - questionStartRef.current })
     }
     if (ok) {
       const streak = prev.streak + 1
@@ -136,7 +140,7 @@ export function Learn() {
               onClick={() => new Audio(word.audio_url!).play()}
             ><Volume2 size={16} strokeWidth={2} /></button>
           )}
-          {qType === 'mc' ? (
+          {qType === 'mc' && opts.length >= 2 ? (
             <div className={styles.options}>
               {opts.map(o => (
                 <button

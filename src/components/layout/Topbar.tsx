@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Plus } from 'lucide-react'
+import { getGoogleUser, isLinkedAccount } from '../../utils/auth'
 import styles from './Topbar.module.css'
 
 export function Topbar() {
@@ -8,10 +9,8 @@ export function Topbar() {
   const [searchValue, setSearchValue] = useState('')
   const [focused, setFocused] = useState(false)
 
-  const googleUser = JSON.parse(localStorage.getItem('googleUser') ?? 'null') as {
-    name?: string
-    picture?: string
-  } | null
+  const googleUser = getGoogleUser()
+  const linked = isLinkedAccount()
 
   const fallbackLetter = googleUser?.name ? googleUser.name.charAt(0).toUpperCase() : 'U'
 
@@ -39,12 +38,12 @@ export function Topbar() {
         </form>
       </div>
       <div className={styles.right}>
-        <button className={styles.create} title="Create">
+        <button className={styles.create} title="Coming soon" disabled>
           <Plus size={18} strokeWidth={2} />
         </button>
         <div
           className={styles.avatar}
-          onClick={() => navigate('/profile')}
+          onClick={() => navigate(linked ? '/profile' : '/login')}
           title={googleUser?.name ?? 'Account'}
         >
           {googleUser?.picture ? (

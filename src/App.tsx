@@ -12,11 +12,10 @@ import { Learn } from './modes/learn/Learn'
 import { Test } from './modes/test/Test'
 import { Blocks } from './modes/blocks/Blocks'
 import { Blast } from './modes/blast/Blast'
+import { isLinkedAccount } from './utils/auth'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
-  const userId = localStorage.getItem('userId')
-  const googleUser = localStorage.getItem('googleUser')
-  if (!userId || !googleUser) {
+  if (!isLinkedAccount()) {
     return <Navigate to="/login" replace />
   }
   return <>{children}</>
@@ -37,13 +36,13 @@ export default function App() {
         <Route path="/set/:setId/test" element={<Test />} />
         <Route path="/set/:setId/blocks" element={<Blocks />} />
         <Route path="/set/:setId/blast" element={<Blast />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
 
       {/* Auth-required */}
       <Route element={<RequireAuth><Layout /></RequireAuth>}>
         <Route path="/search" element={<SearchPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   )

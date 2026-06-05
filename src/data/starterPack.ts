@@ -2,7 +2,7 @@ import type { Word } from '../types'
 
 export const STARTER_PACK_ID = 'starter-pack'
 
-export const STARTER_PACK_NAME = 'Starter Pack — 60 Essential Words'
+export const STARTER_PACK_NAME = 'Starter Pack — 67 Essential Words'
 
 export const STARTER_WORDS: Word[] = [
   { id: 'sp-01', word_en: 'hello',        word_uk: 'привіт',         audio_url: null },

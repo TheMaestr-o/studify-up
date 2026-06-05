@@ -549,7 +549,7 @@ export function Blast() {
         <button className={styles.btn} onClick={handlePlay} disabled={words.length < 2}>
           Play ({words.length} words)
         </button>
-        <button className={styles.rules}>? Game rules</button>
+        <button className={styles.rules} disabled style={{ opacity: 0.4, cursor: 'default' }} title="Coming soon">? Game rules</button>
       </div>
     )
   }
@@ -569,8 +569,8 @@ export function Blast() {
 
   // Playing phase
   const multiplier = getMultiplier(uiStreak)
-  const minutes = 0
-  const seconds = uiTime
+  const minutes = Math.floor(uiTime / 60)
+  const seconds = uiTime % 60
   const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`
 
   return (

@@ -3,13 +3,14 @@ import { Layers, ArrowRight } from 'lucide-react'
 import { useSets } from '../hooks/useSets'
 import { Skeleton } from '../components/ui/Skeleton'
 import { STARTER_PACK_ID, STARTER_PACK_NAME, STARTER_WORDS } from '../data/starterPack'
+import { getLinkedStudentId } from '../utils/auth'
 import styles from './SearchPage.module.css'
 
 export function SearchPage() {
   const initialQuery = new URLSearchParams(window.location.search).get('q') ?? ''
   const [query, setQuery] = useState(initialQuery)
 
-  const userId = Number(localStorage.getItem('userId')) || null
+  const userId = getLinkedStudentId()
   const { sets, loading } = useSets(userId)
 
   function handleQueryChange(value: string) {

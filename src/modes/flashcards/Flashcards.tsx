@@ -5,6 +5,7 @@ import { useWords } from '../../hooks/useWords'
 import styles from './Flashcards.module.css'
 import { saveReview } from '../../api/client'
 import { playWord } from '../../utils/audio'
+import { getLinkedStudentId } from '../../utils/auth'
 
 export function Flashcards() {
   const { setId } = useParams<{ setId: string }>()
@@ -25,6 +26,7 @@ export function Flashcards() {
   }, [])
 
   const next = useCallback(() => {
+    if (!words.length) return
     cardStartRef.current = Date.now()
     setIndex(i => {
       const ni = Math.min(i + 1, total - 1)
@@ -35,6 +37,7 @@ export function Flashcards() {
   }, [total, autoplay, words])
 
   const prev = useCallback(() => {
+    if (!words.length) return
     cardStartRef.current = Date.now()
     setIndex(i => {
       const ni = Math.max(i - 1, 0)
@@ -168,8 +171,8 @@ export function Flashcards() {
 
       <div className={styles.actions}>
         <button className={styles.btnLearning} onClick={() => {
-          const userId = localStorage.getItem('userId')
-          if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: false, responseTimeMs: Date.now() - cardStartRef.current })
+          const userId = getLinkedStudentId()
+          if (userId) saveReview(userId, { setId: setId!, wordId: word.id, correct: false, responseTimeMs: Date.now() - cardStartRef.current })
           setLearning(s => new Set([...s, word.id])); setKnown(k => { const n = new Set(k); n.delete(word.id); return n }); next()
         }}><CornerDownLeft size={14} strokeWidth={2} style={{ verticalAlign: 'middle', marginRight: 4 }} />Still Learning</button>
         <div className={styles.nav}>
@@ -177,8 +180,8 @@ export function Flashcards() {
           <button className={styles.navBtn} onClick={next}>›</button>
         </div>
         <button className={styles.btnKnow} onClick={() => {
-          const userId = localStorage.getItem('userId')
-          if (userId) saveReview(Number(userId), { setId: setId!, wordId: word.id, correct: true, responseTimeMs: Date.now() - cardStartRef.current })
+          const userId = getLinkedStudentId()
+          if (userId) saveReview(userId, { setId: setId!, wordId: word.id, correct: true, responseTimeMs: Date.now() - cardStartRef.current })
           setKnown(k => new Set([...k, word.id])); setLearning(s => { const n = new Set(s); n.delete(word.id); return n }); next()
         }}>Know it <Check size={14} strokeWidth={2.5} style={{ verticalAlign: 'middle', marginLeft: 2 }} /></button>
       </div>

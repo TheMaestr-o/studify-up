@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { BookOpen, Layers, ArrowRight, Brain, Volume2, Smartphone, Zap } from 'lucide-react'
 import { useSets } from '../hooks/useSets'
 import { Skeleton } from '../components/ui/Skeleton'
 import { STARTER_PACK_ID, STARTER_PACK_NAME, STARTER_WORDS } from '../data/starterPack'
+import { getLinkedStudentId, isLinkedAccount } from '../utils/auth'
 import styles from './HomePage.module.css'
 
 const DEMO_PAIRS = [
@@ -111,66 +113,79 @@ function LandingPage() {
   )
 }
 
+function StarterPackCard() {
+  return (
+    <a href={`/set/${STARTER_PACK_ID}`} className={styles.starterCard}>
+      <div className={styles.starterIcon}><Layers size={22} strokeWidth={1.8} color="#fff" /></div>
+      <div className={styles.starterInfo}>
+        <div className={styles.starterName}>{STARTER_PACK_NAME}</div>
+        <div className={styles.starterMeta}>{STARTER_WORDS.length} essential words · Free for everyone</div>
+      </div>
+      <ArrowRight size={18} color="rgba(255,255,255,0.4)" />
+    </a>
+  )
+}
+
 export function HomePage() {
-  const googleUser = localStorage.getItem('googleUser')
-  const userId = localStorage.getItem('userId')
-  const isLoggedIn = Boolean(googleUser && userId)
+  const linked = isLinkedAccount()
+  const studentId = getLinkedStudentId()
+  const { sets, loading, error } = useSets(studentId)
 
-  const numericId = isLoggedIn ? (Number(userId) || null) : null
-  const { sets, loading } = useSets(numericId)
+  if (!linked) return <LandingPage />
 
-  function handleSignOut() {
-    localStorage.removeItem('userId')
-    localStorage.removeItem('googleUser')
-    window.location.href = '/'
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Your Sets</h1>
+        </div>
+        <div className={styles.grid}>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} height="100px" borderRadius="10px" />
+          ))}
+        </div>
+      </div>
+    )
   }
 
-  if (!isLoggedIn) return <LandingPage />
+  if (sets.length === 0) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>Your Sets</h1>
+        </div>
 
-  if (loading) return (
-    <div className={styles.page}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Your Sets</h1>
-      </div>
-      <div className={styles.grid}>
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} height="100px" borderRadius="10px" />
-        ))}
-      </div>
-    </div>
-  )
+        <div className={styles.emptyBlock}>
+          <BookOpen size={44} strokeWidth={1.2} color="rgba(255,255,255,0.15)" />
+          <h2 className={styles.emptyTitle}>
+            {error ? 'Could not load your sets' : 'No teacher sets yet'}
+          </h2>
+          <p className={styles.emptyText}>
+            {error
+              ? 'Check your connection and try again.'
+              : 'Your teacher may not have assigned words yet — or your Student ID might be wrong.'}
+          </p>
+          <a href={`/set/${STARTER_PACK_ID}`} className={styles.emptyCta}>
+            Open Starter Pack <ArrowRight size={16} strokeWidth={2} />
+          </a>
+          <p className={styles.emptyHint}>
+            Linked as ID <strong>{studentId}</strong>. Wrong number?{' '}
+            <Link to="/profile">Fix in Profile</Link>
+          </p>
+        </div>
 
-  if (sets.length === 0) return (
-    <div className={styles.emptyPage}>
-      <div className={styles.emptyCenter}>
-        <BookOpen size={44} strokeWidth={1.2} color="rgba(255,255,255,0.15)" />
-        <h2 className={styles.emptyTitle}>No sets assigned yet</h2>
-        <p className={styles.emptyText}>
-          Your teacher hasn't assigned any words yet.<br />
-          Meanwhile, start with the free Starter Pack.
-        </p>
-        <button className={styles.signOutLink} onClick={handleSignOut}>Sign out</button>
+        <div className={styles.starterSection}>
+          <p className={styles.starterLabel}>Free practice</p>
+          <StarterPackCard />
+        </div>
       </div>
-
-      <div className={styles.starterSection}>
-        <p className={styles.starterLabel}>Start here</p>
-        <a href={`/set/${STARTER_PACK_ID}`} className={styles.starterCard}>
-          <div className={styles.starterIcon}><Layers size={22} strokeWidth={1.8} color="#fff" /></div>
-          <div className={styles.starterInfo}>
-            <div className={styles.starterName}>{STARTER_PACK_NAME}</div>
-            <div className={styles.starterMeta}>{STARTER_WORDS.length} essential words · Free for everyone</div>
-          </div>
-          <ArrowRight size={18} color="rgba(255,255,255,0.4)" />
-        </a>
-      </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <div className={styles.page}>
       <div className={styles.header}>
         <h1 className={styles.title}>Your Sets</h1>
-        <button className={styles.signOut} onClick={handleSignOut}>Sign out</button>
       </div>
 
       <div className={styles.grid}>

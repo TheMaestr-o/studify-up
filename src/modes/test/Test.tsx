@@ -6,6 +6,7 @@ import styles from './Test.module.css'
 import type { Word } from '../../types'
 import { saveReview } from '../../api/client'
 import { shuffleArray } from '../../utils/shuffle'
+import { getLinkedStudentId } from '../../utils/auth'
 
 const OPTIONS_COUNT = 4
 
@@ -17,7 +18,7 @@ interface Question {
 
 function buildQuestions(words: Word[], count: number): Question[] {
   const shuffled = shuffleArray(words)
-  const pool = shuffled.slice(0, count)
+  const pool = shuffled.slice(0, Math.min(count, words.length))
   return pool.map(word => {
     const correct = word.word_uk ?? word.word_en
     // Build distractor pool — if fewer than OPTIONS_COUNT-1 unique distractors exist,
@@ -72,9 +73,9 @@ export function Test() {
   const handleNext = () => {
     if (selected === null || !q) return
     const correct = selected === q.correct
-    const userId = localStorage.getItem('userId')
+    const userId = getLinkedStudentId()
     if (userId) {
-      saveReview(Number(userId), { setId: setId!, wordId: q.word.id, correct, responseTimeMs: 500 })
+      saveReview(userId, { setId: setId!, wordId: q.word.id, correct, responseTimeMs: 500 })
     }
     const nextAnswers = [...answers, correct]
     if (current + 1 >= questions.length) {

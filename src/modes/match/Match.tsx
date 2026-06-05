@@ -4,15 +4,7 @@ import { Shuffle, Trophy, ChevronLeft } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
 import styles from './Match.module.css'
 import type { MatchCard } from '../../types'
-
-function shuffleArray<T>(arr: T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j]!, a[i]!]
-  }
-  return a
-}
+import { shuffleArray } from '../../utils/shuffle'
 
 function makeBatch(words: { id: string; word_en: string; word_uk: string | null }[], batchIdx: number): MatchCard[] {
   const slice = words.slice(batchIdx * 6, batchIdx * 6 + 6)
@@ -102,6 +94,18 @@ export function Match() {
       <div style={{ textAlign: 'center', padding: '80px 24px' }}>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Failed to load words.</p>
         <button onClick={() => window.location.reload()} style={{ marginTop: 16, background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '24px', padding: '10px 24px', cursor: 'pointer' }}>Retry</button>
+      </div>
+    </div>
+  )
+
+  if (!words.length) return (
+    <div className={styles.center}>
+      <button onClick={() => navigate(`/set/${setId}`)} style={{ background: 'none', color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: 'none', padding: 0 }}>
+        <ChevronLeft size={14} strokeWidth={2} /> Back to set
+      </button>
+      <div style={{ textAlign: 'center', padding: '80px 24px', color: 'rgba(255,255,255,0.4)' }}>
+        <p style={{ fontSize: 16 }}>No words in this set yet.</p>
+        <p style={{ fontSize: 14, marginTop: 8 }}>Ask your teacher to add some words.</p>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-.page { animation: fadeIn 0.2s ease; max-width: 480px; }
+.page { animation: fadeIn 0.2s ease; max-width: 480px; margin: 0 auto; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .header { margin-bottom: 24px; }
@@ -33,7 +33,14 @@
 }
 .sectionLabel {
   font-size: 11px; font-weight: 700; letter-spacing: 0.07em;
-  text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+}
+.sectionHint {
+  font-size: 13px; color: var(--text-dim); line-height: 1.45;
+  margin-bottom: 12px;
+}
+.saveError {
+  font-size: 13px; color: #f87171; margin-top: 10px;
 }
 .row { display: flex; align-items: center; gap: 10px; }
 
