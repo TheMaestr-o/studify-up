@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ChevronLeft, LayoutGrid, Check, X, Zap } from 'lucide-react'
 import { useWords } from '../../hooks/useWords'
@@ -127,6 +127,7 @@ export function Blocks() {
   const { setId } = useParams<{ setId: string }>()
   const navigate = useNavigate()
   const { words, loading } = useWords(setId ?? null)
+  const timeoutsRef = useRef<number[]>([])
 
   // Game state
   const [started, setStarted] = useState(false)
@@ -138,6 +139,14 @@ export function Blocks() {
   const [question, setQuestion] = useState<{ word: Word; options: string[]; correct: string } | null>(null)
   const [qFeedback, setQFeedback] = useState<'correct' | 'wrong' | null>(null)
   const [hover, setHover] = useState<{ row: number; col: number } | null>(null)
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(id => clearTimeout(id))
+      timeoutsRef.current = []
+    }
+  }, [])
 
   // Start game
   const startGame = useCallback(() => {
@@ -199,33 +208,19 @@ export function Blocks() {
     if (!question || qFeedback) return
     const ok = answer === question.correct
     setQFeedback(ok ? 'correct' : 'wrong')
-    if (ok) {
-      setTimeout(() => {
-        const newTray = randomPieces(3)
-        setTray(newTray)
-        setPhase('placing')
-        setQuestion(null)
-        setQFeedback(null)
-        setSelectedIdx(null)
-        // Check if new pieces fit
-        if (!anyPieceFits(board, newTray)) {
-          setPhase('gameover')
-        }
-      }, 800)
-    } else {
-      // Wrong answer: dismiss after short delay but still deal pieces (penalize via no bonus)
-      setTimeout(() => {
-        const newTray = randomPieces(3)
-        setTray(newTray)
-        setPhase('placing')
-        setQuestion(null)
-        setQFeedback(null)
-        setSelectedIdx(null)
-        if (!anyPieceFits(board, newTray)) {
-          setPhase('gameover')
-        }
-      }, 1400)
-    }
+    const timeoutId = window.setTimeout(() => {
+      const newTray = randomPieces(3)
+      setTray(newTray)
+      setPhase('placing')
+      setQuestion(null)
+      setQFeedback(null)
+      setSelectedIdx(null)
+      // Check if new pieces fit
+      if (!anyPieceFits(board, newTray)) {
+        setPhase('gameover')
+      }
+    }, ok ? 800 : 1400)
+    timeoutsRef.current.push(timeoutId)
   }
 
   // Ghost preview cells
