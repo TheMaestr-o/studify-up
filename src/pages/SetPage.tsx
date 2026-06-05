@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle, Share2, Volume2, Star, Pin, ChevronRight } from 'lucide-react'
+import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle, Share2, Volume2, Star, Pin, ChevronRight, Bookmark, Users } from 'lucide-react'
 import { useWords } from '../hooks/useWords'
 import { fetchSetMeta } from '../api/client'
 import { playWord } from '../utils/audio'
@@ -105,12 +105,29 @@ export function SetPage() {
       )}
 
       <div className={styles.header}>
-        <h1 className={styles.title}>
-          {displayTitle === null ? <span className={styles.titleSkeleton} /> : displayTitle}
-        </h1>
-        <button className={styles.shareBtn} onClick={handleShare} title="Copy link">
-          <Share2 size={16} strokeWidth={2} />
-        </button>
+        <div className={styles.headerTop}>
+          <div>
+            <h1 className={styles.title}>
+              {displayTitle === null ? <span className={styles.titleSkeleton} /> : displayTitle}
+            </h1>
+            <div className={styles.setMeta}>
+              <span className={styles.rating}>★★★★★ 4.5 (2)</span>
+              <span className={styles.author}>by Mari_Fedoriuk5</span>
+              <span className={styles.badge}>Учитель</span>
+            </div>
+          </div>
+          <div className={styles.headerIcons}>
+            <button className={styles.headerIconBtn} title="Save">
+              <Bookmark size={18} strokeWidth={2} />
+            </button>
+            <button className={styles.headerIconBtn} title="Groups">
+              <Users size={18} strokeWidth={2} />
+            </button>
+            <button className={styles.headerIconBtn} onClick={handleShare} title="Share">
+              <Share2 size={18} strokeWidth={2} />
+            </button>
+          </div>
+        </div>
       </div>
       <p className={styles.meta}>{words.length} terms</p>
 
