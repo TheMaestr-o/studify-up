@@ -175,9 +175,9 @@
   margin: 18px 0 14px;
 }
 .dividerOr::before, .dividerOr::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
+  content: ''; flex: 1; height: 1px; background: var(--border); display: block;
 }
-.dividerOr span { font-size: 12px; color: var(--text-dim); }
+.dividerOr span { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
 
 .noGoogleBtn {
   margin-top: 0;
