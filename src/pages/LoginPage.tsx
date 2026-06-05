@@ -62,7 +62,8 @@ export function LoginPage() {
     // Check if this Google email already has a Student ID
     const existing = getLinkedStudentId()
     if (existing) {
-      proceedHome(user, String(existing))
+      finishLogin(user, String(existing), credential)
+      window.location.href = '/'
       setIsProcessing(false)
       return
     }
@@ -72,7 +73,8 @@ export function LoginPage() {
       const checkRes = await fetch(`https://english-bot.ohnedan.workers.dev/api/student-id?email=${encodeURIComponent(user.email)}`)
       const checkData = await checkRes.json()
       if (checkData.studentId) {
-        proceedHome(user, String(checkData.studentId))
+        finishLogin(user, String(checkData.studentId), credential)
+        window.location.href = '/'
         setIsProcessing(false)
         return
       }
@@ -89,7 +91,8 @@ export function LoginPage() {
       })
       const autoData = await autoRes.json()
       if (autoData.studentId) {
-        proceedHome(user, String(autoData.studentId))
+        finishLogin(user, String(autoData.studentId), credential)
+        window.location.href = '/'
         setIsProcessing(false)
         return
       }

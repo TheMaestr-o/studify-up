@@ -1,9 +1,22 @@
 import type { Word, VocabSet, WordProgress, ReviewPayload, TelegramAuthData } from '../types'
+import { getGoogleToken } from '../utils/auth'
 
 const BASE = import.meta.env.VITE_API_URL ?? 'https://english-bot.ohnedan.workers.dev'
 
+function getAuthHeaders(): HeadersInit {
+  const token = getGoogleToken()
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  }
+}
+
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(BASE + path, init)
+  const headers = getAuthHeaders()
+  const res = await fetch(BASE + path, {
+    ...init,
+    headers: { ...headers, ...(init?.headers ?? {}) },
+  })
   const data = await res.json() as Record<string, unknown> & { error?: string }
 
   if (!res.ok) {

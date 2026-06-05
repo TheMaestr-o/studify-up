@@ -8,6 +8,13 @@ import './styles/global.css'
 
 migrateLegacySession()
 
+// Register service worker for offline support
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch((err) => {
+    console.debug('Service worker registration failed:', err)
+  })
+}
+
 const GOOGLE_CLIENT_ID = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID ?? 'YOUR_GOOGLE_CLIENT_ID'
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {

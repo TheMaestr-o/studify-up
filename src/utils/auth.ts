@@ -23,21 +23,27 @@ export function getGoogleUser(): StoredUser | null {
   }
 }
 
-export function isLinkedAccount(): boolean {
-  return getLinkedStudentId() !== null && getGoogleUser() !== null
+export function getGoogleToken(): string | null {
+  return localStorage.getItem('googleToken')
 }
 
-export function finishLogin(user: StoredUser, studentId: number | string) {
+export function isLinkedAccount(): boolean {
+  return getLinkedStudentId() !== null && getGoogleUser() !== null && getGoogleToken() !== null
+}
+
+export function finishLogin(user: StoredUser, studentId: number | string, token?: string) {
   const id = typeof studentId === 'string' ? parseInt(studentId, 10) : studentId
   if (!Number.isInteger(id) || id <= 0) return false
   localStorage.setItem('googleUser', JSON.stringify(user))
   localStorage.setItem('userId', String(id))
+  if (token) localStorage.setItem('googleToken', token)
   return true
 }
 
 export function clearSession() {
   localStorage.removeItem('userId')
   localStorage.removeItem('googleUser')
+  localStorage.removeItem('googleToken')
 }
 
 /** Drop invalid sessions from older builds (e.g. userId "0" after Skip). */
