@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Edit2, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
+import { Plus, Edit2, Trash2, ChevronDown, ChevronUp, Camera, Loader } from 'lucide-react'
 import { getGoogleUser } from '../utils/auth'
 import { fetchWords } from '../api/client'
 import type { VocabSet, Word } from '../types'
+import { Toast } from '../components/ui/Toast'
 import styles from './TeacherPage.module.css'
 
 export function TeacherPage() {
@@ -43,6 +44,14 @@ export function TeacherPage() {
   const [newWord, setNewWord] = useState({ word_en: '', word_uk: '' })
   const [editingWordId, setEditingWordId] = useState<string | null>(null)
   const [editingWord, setEditingWord] = useState<Word | null>(null)
+
+  // Screenshot state
+  const [showScreenshotModal, setShowScreenshotModal] = useState(false)
+  const [selectedSetId, setSelectedSetId] = useState<string | null>(null)
+  const [screenshotCustomName, setScreenshotCustomName] = useState('')
+  const [screenshotLoading, setScreenshotLoading] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [showToast, setShowToast] = useState(false)
 
   // Load sets (mock - will call backend)
   useEffect(() => {
@@ -139,11 +148,81 @@ export function TeacherPage() {
     setEditingWord(null)
   }
 
+  // Screenshot handler
+  const handleTakeScreenshot = async () => {
+    if (!selectedSetId) return
+
+    const set = sets.find(s => s.id === selectedSetId)
+    if (!set) return
+
+    setScreenshotLoading(true)
+
+    try {
+      const url = `https://studify-up.vercel.app/set/${selectedSetId}`
+      const screenshotName = screenshotCustomName.trim() || set.name
+
+      const response = await fetch('http://localhost:3001/api/screenshot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url,
+          name: screenshotName,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+
+      const data = await response.json()
+      const filePath = data.filePath || `./screenshots/${screenshotName}-${new Date().toISOString().split('T')[0]}.png`
+
+      setToastMessage(`Screenshot saved to: ${filePath}`)
+      setShowToast(true)
+
+      setShowScreenshotModal(false)
+      setSelectedSetId(null)
+      setScreenshotCustomName('')
+
+      setTimeout(() => setShowToast(false), 4000)
+    } catch (err) {
+      console.error('Screenshot error:', err)
+      setToastMessage('Failed to take screenshot (is server running? Start with: cd studify-screenshot-service && npm start)')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 5000)
+    } finally {
+      setScreenshotLoading(false)
+    }
+  }
+
+  const openScreenshotModal = (setId: string) => {
+    setSelectedSetId(setId)
+    const set = sets.find(s => s.id === setId)
+    setScreenshotCustomName(set?.name || '')
+    setShowScreenshotModal(true)
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Teacher Panel</h1>
-        <p className={styles.subtitle}>Manage your vocabulary sets</p>
+        <div className={styles.headerTop}>
+          <div>
+            <h1 className={styles.title}>Teacher Panel</h1>
+            <p className={styles.subtitle}>Manage your vocabulary sets</p>
+          </div>
+          {sets.length > 0 && (
+            <button
+              className={styles.screenshotBtn}
+              onClick={() => setShowScreenshotModal(true)}
+              title="Take set screenshot"
+            >
+              <Camera size={18} strokeWidth={2} />
+              Take Screenshot
+            </button>
+          )}
+        </div>
       </div>
 
       <div className={styles.userCard}>
@@ -205,6 +284,16 @@ export function TeacherPage() {
                     </span>
                   </div>
                   <div className={styles.setActions}>
+                    <button
+                      className={styles.iconBtn}
+                      onClick={e => {
+                        e.stopPropagation()
+                        openScreenshotModal(set.id)
+                      }}
+                      title="Take screenshot"
+                    >
+                      <Camera size={16} strokeWidth={2} />
+                    </button>
                     <button
                       className={styles.iconBtn}
                       onClick={e => {
@@ -406,6 +495,72 @@ export function TeacherPage() {
           </div>
         </div>
       )}
+
+      {/* Screenshot Modal */}
+      {showScreenshotModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowScreenshotModal(false)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <h2 className={styles.modalTitle}>Take Set Screenshot</h2>
+            <div>
+              <label className={styles.label}>Select Set</label>
+              <select
+                className={styles.select}
+                value={selectedSetId || ''}
+                onChange={e => setSelectedSetId(e.target.value)}
+              >
+                <option value="">Choose a set...</option>
+                {sets.map(set => (
+                  <option key={set.id} value={set.id}>
+                    {set.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={styles.label}>Custom Filename (optional)</label>
+              <input
+                type="text"
+                className={styles.input}
+                placeholder="e.g., my-vocab-set"
+                value={screenshotCustomName}
+                onChange={e => setScreenshotCustomName(e.target.value)}
+              />
+              <p className={styles.inputHint}>
+                Default: {selectedSetId ? sets.find(s => s.id === selectedSetId)?.name : 'set name'}
+              </p>
+            </div>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.cancelBtn}
+                onClick={() => setShowScreenshotModal(false)}
+                disabled={screenshotLoading}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.submitBtn}
+                onClick={handleTakeScreenshot}
+                disabled={!selectedSetId || screenshotLoading}
+              >
+                {screenshotLoading ? (
+                  <>
+                    <Loader size={16} strokeWidth={2} className={styles.spinnerIcon} />
+                    Taking...
+                  </>
+                ) : (
+                  <>
+                    <Camera size={16} strokeWidth={2} />
+                    Take Screenshot
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      <Toast message={toastMessage} visible={showToast} />
     </div>
   )
 }

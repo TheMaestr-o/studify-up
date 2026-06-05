@@ -20,6 +20,13 @@
   margin-top: 20px;
 }
 
+.headerTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .title {
   font-size: 28px;
   font-weight: 700;
@@ -29,6 +36,27 @@
 .subtitle {
   font-size: 14px;
   color: var(--text-muted);
+}
+
+.screenshotBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-md);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.screenshotBtn:hover {
+  background: var(--accent-hover);
 }
 
 /* Auth required */
@@ -464,4 +492,58 @@
 .submitBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Form elements */
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.select {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  margin-bottom: 16px;
+}
+
+.select:focus {
+  border-color: var(--accent);
+}
+
+.select option {
+  background: var(--bg-surface);
+  color: var(--text);
+}
+
+.inputHint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+
+.spinnerIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
