@@ -291,9 +291,7 @@
 
 /* Bottom banner */
 .starterBanner {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 24px 48px;
+  display: none;
 }
 
 .starterBannerInner {
