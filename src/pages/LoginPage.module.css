@@ -172,7 +172,7 @@
 
 .dividerOr {
   width: 100%; display: flex; align-items: center; gap: 12px;
-  margin: 18px 0 14px;
+  margin: 20px 0 16px;
 }
 .dividerOr::before, .dividerOr::after {
   content: ''; flex: 1; height: 1px; background: var(--border); display: block;
