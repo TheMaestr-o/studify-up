@@ -87,11 +87,43 @@ export function TeacherPage() {
   // Create new set
   const handleCreateSet = async () => {
     if (!newSetName.trim()) return
-    // TODO: Call backend API to create set
-    // For now, just show placeholder
-    alert(`Set "${newSetName}" would be created. Backend endpoint needed: POST /vocab-sets`)
-    setNewSetName('')
-    setShowCreateModal(false)
+
+    const user = getGoogleUser()
+    if (!user) {
+      alert('Not logged in')
+      return
+    }
+
+    try {
+      const response = await fetch('https://english-bot.gssdarm.workers.dev/vocab-sets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newSetName.trim(),
+          google_email: user.email,
+        }),
+      })
+
+      if (!response.ok) {
+        const err = await response.json()
+        alert(`Error: ${err.error || 'Failed to create set'}`)
+        return
+      }
+
+      const data = await response.json()
+      const newSet: VocabSet = {
+        id: data.setId,
+        name: data.name,
+        word_count: 0,
+        language: 'uk',
+      }
+      setSets(prev => [...prev, newSet])
+      setNewSetName('')
+      setShowCreateModal(false)
+    } catch (err) {
+      console.error('Create set error:', err)
+      alert('Failed to create set')
+    }
   }
 
   // Delete set
