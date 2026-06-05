@@ -172,7 +172,7 @@
 
 .dividerOr {
   width: 100%; display: flex; align-items: center; gap: 12px;
-  margin: 16px 0 0;
+  margin: 18px 0 14px;
 }
 .dividerOr::before, .dividerOr::after {
   content: ''; flex: 1; height: 1px; background: var(--border);
@@ -180,7 +180,7 @@
 .dividerOr span { font-size: 12px; color: var(--text-dim); }
 
 .noGoogleBtn {
-  margin-top: 12px;
+  margin-top: 0;
   width: 100%;
   padding: 13px;
   border: 1px solid rgba(35,178,109,0.35);
