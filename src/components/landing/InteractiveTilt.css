@@ -1,0 +1,43 @@
+.interactive-tilt {
+  position: relative;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.tilt-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.tilt-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(124, 157, 255, 0.4) 0%,
+    rgba(139, 92, 246, 0.2) 40%,
+    transparent 70%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  filter: blur(25px);
+  z-index: -1;
+  will-change: opacity, transform;
+}
+
+/* Respect user's motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .interactive-tilt {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .tilt-glow {
+    display: none;
+  }
+}

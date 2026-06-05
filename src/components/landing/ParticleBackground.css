@@ -1,0 +1,90 @@
+.particle-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 50%, #0f1419 100%);
+}
+
+.particle {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Animated radial gradients for atmospheric effect */
+.particle-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 20% 50%, rgba(66, 85, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+  animation: gradient-shift 8s ease-in-out infinite;
+  z-index: 0;
+}
+
+.particle-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(circle at 60% 20%, rgba(79, 172, 254, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 70%, rgba(168, 85, 247, 0.04) 0%, transparent 50%);
+  pointer-events: none;
+  animation: gradient-shift-reverse 10s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(20px, -20px) scale(1.1);
+  }
+}
+
+@keyframes gradient-shift-reverse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(-20px, 20px) scale(1.05);
+  }
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+  .particle-background {
+    background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 50%, #0f1419 100%);
+  }
+
+  /* Reduce particles on mobile for better performance */
+  .particle:nth-child(n+21) {
+    display: none;
+  }
+}
+
+/* Respect user's motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .particle-background::before,
+  .particle-background::after {
+    animation: none;
+  }
+}
