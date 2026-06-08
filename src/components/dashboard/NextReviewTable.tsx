@@ -4,10 +4,9 @@ import styles from './NextReviewTable.module.css'
 
 interface NextReviewTableProps {
   reviews: NextReview[]
-  onStudyWord?: (wordId: string) => void
 }
 
-export function NextReviewTable({ reviews, onStudyWord }: NextReviewTableProps) {
+export function NextReviewTable({ reviews }: NextReviewTableProps) {
   if (!reviews || reviews.length === 0) {
     return (
       <div className={styles.empty}>

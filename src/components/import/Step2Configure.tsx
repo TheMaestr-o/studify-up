@@ -40,7 +40,7 @@ export function Step2Configure({ rows, onNext, onBack }: Step2ConfigureProps) {
       <table className={styles.configTable}>
         <thead>
           <tr>
-            {headers.map((header, i) => (
+            {headers.map((_, i) => (
               <th key={i}>
                 <select
                   value={columnTypes[i]}

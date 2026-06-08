@@ -161,6 +161,15 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  gap: 12px;
+}
+
+.googleWrap > div {
+  width: 100%;
+}
+
+.googleWrap > div > div {
+  width: 100%;
 }
 
 .hint {
@@ -180,7 +189,7 @@
 .dividerOr span { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
 
 .noGoogleBtn {
-  margin-top: 0;
+  margin-top: 8px;
   width: 100%;
   padding: 13px;
   border: 1px solid rgba(66,85,255,0.3);
@@ -189,12 +198,16 @@
   color: #7c9dff;
   font-size: 14px; font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s;
   display: flex; align-items: center; justify-content: center; gap: 6px;
 }
 .noGoogleBtn:hover {
   background: rgba(66,85,255,0.15);
-  border-color: rgba(66,85,255,0.5);
+  border-color: rgba(66,85,255,0.6);
+  transform: translateY(-1px);
+}
+.noGoogleBtn:active {
+  transform: translateY(0);
 }
 
 /* ── Step 2: Student ID ── */
@@ -203,7 +216,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: 12px;
+  gap: 20px;
   animation: fadeIn 0.25s ease;
 }
 
@@ -253,10 +266,17 @@
   background: var(--accent); color: #fff;
   font-size: 15px; font-weight: 600;
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
-  transition: background 0.15s, transform 0.1s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(66,85,255,0.3);
 }
-.linkButton:hover { background: var(--accent-hover); }
-.linkButton:active { transform: scale(0.98); }
+.linkButton:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(66,85,255,0.4);
+}
+.linkButton:active {
+  transform: translateY(0);
+}
 
 .skipButton {
   width: 100%; padding: 11px;
@@ -264,9 +284,18 @@
   border-radius: var(--r-pill);
   background: transparent; color: var(--text-muted);
   font-size: 13px; cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: all 0.2s;
+  margin-top: 8px;
 }
-.skipButton:hover { color: var(--text); border-color: var(--border-light); }
+.skipButton:hover {
+  color: var(--text);
+  border-color: var(--border-light);
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-1px);
+}
+.skipButton:active {
+  transform: translateY(0);
+}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

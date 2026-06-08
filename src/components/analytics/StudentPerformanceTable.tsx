@@ -11,6 +11,11 @@ interface StudentPerformanceTableProps {
 type SortField = 'name' | 'total_reviews' | 'correct' | 'accuracy_pct'
 type SortOrder = 'asc' | 'desc'
 
+function SortIcon({ field, sortField, sortOrder }: { field: SortField; sortField: SortField; sortOrder: SortOrder }) {
+  if (sortField !== field) return null
+  return sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
+}
+
 export function StudentPerformanceTable({ students, loading = false }: StudentPerformanceTableProps) {
   const [sortField, setSortField] = useState<SortField>('accuracy_pct')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
@@ -58,11 +63,6 @@ export function StudentPerformanceTable({ students, loading = false }: StudentPe
     return sortOrder === 'asc' ? (aVal as number) - (bVal as number) : (bVal as number) - (aVal as number)
   })
 
-  const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) return null
-    return sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
-  }
-
   const getAccuracyColor = (pct: number): string => {
     if (pct >= 80) return styles.accuracyGreen
     if (pct >= 60) return styles.accuracyYellow
@@ -84,19 +84,19 @@ export function StudentPerformanceTable({ students, loading = false }: StudentPe
           <tr>
             <th onClick={() => handleSort('name')} className={styles.sortable}>
               Student Name
-              <SortIcon field="name" />
+              <SortIcon field="name" sortField={sortField} sortOrder={sortOrder} />
             </th>
             <th onClick={() => handleSort('total_reviews')} className={styles.sortable}>
               Total Reviews
-              <SortIcon field="total_reviews" />
+              <SortIcon field="total_reviews" sortField={sortField} sortOrder={sortOrder} />
             </th>
             <th onClick={() => handleSort('correct')} className={styles.sortable}>
               Correct
-              <SortIcon field="correct" />
+              <SortIcon field="correct" sortField={sortField} sortOrder={sortOrder} />
             </th>
             <th onClick={() => handleSort('accuracy_pct')} className={styles.sortable}>
               Accuracy %
-              <SortIcon field="accuracy_pct" />
+              <SortIcon field="accuracy_pct" sortField={sortField} sortOrder={sortOrder} />
             </th>
           </tr>
         </thead>

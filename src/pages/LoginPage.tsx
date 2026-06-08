@@ -163,10 +163,9 @@ export function LoginPage() {
                 theme="filled_blue"
                 shape="pill"
                 size="large"
-                width="280"
+                text="signin"
               />
-              <p className={styles.hint}>Free forever · No credit card needed</p>
-              <div className={styles.dividerOr}><span>or</span></div>
+              <p className={styles.hint}>Free forever</p>
               <button type="button" className={styles.noGoogleBtn} onClick={() => setGoogleFailed(true)}>
                 <User size={15} strokeWidth={2} /> Continue with Student ID
               </button>

@@ -80,11 +80,11 @@ function LandingPage() {
             Share a set link and your students can start instantly.
           </p>
 
+
           <div className={styles.featureGrid}>
             {FEATURES.map(({ Icon, text }) => (
               <div key={text} className={styles.featureItem}>
                 <Icon size={16} strokeWidth={1.8} />
-                <span>{text}</span>
               </div>
             ))}
           </div>
@@ -163,7 +163,7 @@ function getProgressPercentage(progress: Array<{ level: string }>): number {
 
 function ContinueStudyingSection({ sets, studentId }: { sets: any[], studentId: number | null }) {
   const [continueData, setContinueData] = useState<Array<{ set: any, progress: any, percentage: number }>>([])
-  const [loading, setLoading] = useState(false)
+
 
   useEffect(() => {
     if (!studentId || sets.length === 0) return
@@ -171,7 +171,7 @@ function ContinueStudyingSection({ sets, studentId }: { sets: any[], studentId: 
     const recentIds = getRecentSetIds()
     if (recentIds.length === 0) return
 
-    setLoading(true)
+    let mounted = true
     Promise.all(
       recentIds
         .slice(0, 4)
@@ -187,11 +187,14 @@ function ContinueStudyingSection({ sets, studentId }: { sets: any[], studentId: 
           }
         })
     )
-      .then(results => setContinueData(results.filter(Boolean) as any))
-      .finally(() => setLoading(false))
+      .then(results => {
+        if (mounted) setContinueData(results.filter(Boolean) as any)
+      })
+
+    return () => { mounted = false }
   }, [sets, studentId])
 
-  if (loading || continueData.length === 0) return null
+  if (continueData.length === 0) return null
 
   return (
     <div className={styles.section}>

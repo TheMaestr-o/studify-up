@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle, Share2, Volume2, Star, Pin, ChevronRight, Bookmark, Users } from 'lucide-react'
+import { Layers, RefreshCw, ClipboardList, Grid3x3, Zap, Shuffle, Share2, Volume2, Star, ChevronRight, Bookmark, Users } from 'lucide-react'
 import { useWords } from '../hooks/useWords'
 import { fetchSetMeta } from '../api/client'
 import { playWord } from '../utils/audio'
@@ -147,9 +147,7 @@ export function SetPage() {
       {/* Preview card */}
       <div className={styles.flashcard}>
         <div className={styles.cardTop}>
-          <span className={styles.hint}>
-            <Pin size={13} strokeWidth={2} color="var(--accent)" /> Show hint
-          </span>
+          <span className={styles.hint}>Show hint</span>
           <div className={styles.cardActions}>
             {previewWord?.audio_url && (
               <button

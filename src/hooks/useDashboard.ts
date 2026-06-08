@@ -5,6 +5,8 @@ import {
   fetchDashboardNextReviews,
   fetchDashboardMasteryTimeline,
   fetchDashboardHeatmap,
+} from '../api/client'
+import type {
   DashboardStats,
   RetentionDataPoint,
   NextReview,

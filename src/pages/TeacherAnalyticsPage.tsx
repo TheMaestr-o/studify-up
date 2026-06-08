@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Download, Mail, RotateCcw, ArrowLeft, Loader } from 'lucide-react'
-import { getGoogleUser } from '../utils/auth'
+import { getGoogleUser, getLinkedStudentId } from '../utils/auth'
 import { fetchSets, exportAnalytics } from '../api/client'
 import { useAnalytics } from '../hooks/useAnalytics'
 import { WordDifficultyTable } from '../components/analytics/WordDifficultyTable'
@@ -47,11 +47,21 @@ export function TeacherAnalyticsPage() {
 
   const { analyticsData, loading, error, getAnalytics } = useAnalytics()
 
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (showToast) {
+      const timeout = setTimeout(() => setShowToast(false), 3000)
+      return () => clearTimeout(timeout)
+    }
+  }, [showToast])
+
   // Load teacher's sets
   useEffect(() => {
     const loadSets = async () => {
       try {
-        const data = await fetchSets(googleUser.id)
+        const studentId = getLinkedStudentId()
+        if (!studentId) return
+        const data = await fetchSets(studentId)
         setSets(data)
         // Auto-select first set if param not provided
         if (!paramSetId && data.length > 0) {
@@ -116,8 +126,6 @@ export function TeacherAnalyticsPage() {
     setToastMessage('🔄 Reset feature coming soon')
     setShowToast(true)
   }
-
-  const selectedSet = sets.find(s => s.id === selectedSetId)
 
   return (
     <div className={styles.page}>
@@ -245,8 +253,7 @@ export function TeacherAnalyticsPage() {
 
       <Toast
         message={toastMessage}
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
+        visible={showToast}
         duration={3000}
       />
     </div>
