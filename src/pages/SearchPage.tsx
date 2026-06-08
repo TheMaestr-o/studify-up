@@ -3,6 +3,7 @@ import { Layers, ArrowRight } from 'lucide-react'
 import { useSets } from '../hooks/useSets'
 import { Skeleton } from '../components/ui/Skeleton'
 import { STARTER_PACK_ID, STARTER_PACK_NAME, STARTER_WORDS } from '../data/starterPack'
+import { DOPAMINE_AIRPORT_ID, DOPAMINE_AIRPORT_NAME, DOPAMINE_AIRPORT_WORDS } from '../data/dopamineAirport'
 import { getLinkedStudentId } from '../utils/auth'
 import styles from './SearchPage.module.css'
 
@@ -29,9 +30,18 @@ export function SearchPage() {
     q.includes('english') ||
     STARTER_PACK_NAME.toLowerCase().includes(q)
 
+  const showDopamineAirport =
+    q === '' ||
+    'dopamine'.includes(q) ||
+    'airport'.includes(q) ||
+    'дoпамин'.includes(q) ||
+    q.includes('dopamine') ||
+    q.includes('airport') ||
+    DOPAMINE_AIRPORT_NAME.toLowerCase().includes(q)
+
   const filteredSets = sets.filter(set => set.name.toLowerCase().includes(q))
 
-  const hasResults = showStarter || filteredSets.length > 0
+  const hasResults = showStarter || showDopamineAirport || filteredSets.length > 0
 
   return (
     <div className={styles.page}>
@@ -74,6 +84,22 @@ export function SearchPage() {
                 <div>
                   <div className={styles.name}>{STARTER_PACK_NAME}</div>
                   <div className={styles.meta}>{STARTER_WORDS.length} terms</div>
+                </div>
+              </div>
+              <ArrowRight size={16} color="rgba(255,255,255,0.3)" className={styles.arrow} />
+            </a>
+          )}
+
+          {showDopamineAirport && (
+            <a href={`/set/${DOPAMINE_AIRPORT_ID}`} className={`${styles.card} ${styles.cardStarter}`}>
+              <div className={styles.starterBadge}>Free for all</div>
+              <div className={styles.cardTop}>
+                <div className={styles.starterIconSmall}>
+                  <Layers size={16} strokeWidth={1.8} color="#fff" />
+                </div>
+                <div>
+                  <div className={styles.name}>{DOPAMINE_AIRPORT_NAME}</div>
+                  <div className={styles.meta}>{DOPAMINE_AIRPORT_WORDS.length} terms</div>
                 </div>
               </div>
               <ArrowRight size={16} color="rgba(255,255,255,0.3)" className={styles.arrow} />

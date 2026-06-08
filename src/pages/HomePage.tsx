@@ -6,6 +6,7 @@ import { fetchProgress } from '../api/client'
 import { Skeleton } from '../components/ui/Skeleton'
 import { CustomCursor, ParticleBackground, InteractiveTilt } from '../components/landing'
 import { STARTER_PACK_ID, STARTER_PACK_NAME, STARTER_WORDS } from '../data/starterPack'
+import { DOPAMINE_AIRPORT_ID, DOPAMINE_AIRPORT_NAME, DOPAMINE_AIRPORT_WORDS } from '../data/dopamineAirport'
 import { getLinkedStudentId, isLinkedAccount } from '../utils/auth'
 import styles from './HomePage.module.css'
 
@@ -306,6 +307,18 @@ export function HomePage() {
               <div className={styles.starterBadge}>Free for all</div>
               <div className={styles.name}>{STARTER_PACK_NAME}</div>
               <div className={styles.meta}>{STARTER_WORDS.length} terms</div>
+            </div>
+            <div className={styles.cardFooter}>
+              <div className={styles.lang}>EN</div>
+              <Play size={16} strokeWidth={2} className={styles.hoverIcon} />
+            </div>
+          </a>
+
+          <a href={`/set/${DOPAMINE_AIRPORT_ID}`} className={`${styles.card} ${styles.cardStarter}`}>
+            <div className={styles.cardContent}>
+              <div className={styles.starterBadge}>Free for all</div>
+              <div className={styles.name}>{DOPAMINE_AIRPORT_NAME}</div>
+              <div className={styles.meta}>{DOPAMINE_AIRPORT_WORDS.length} terms</div>
             </div>
             <div className={styles.cardFooter}>
               <div className={styles.lang}>EN</div>

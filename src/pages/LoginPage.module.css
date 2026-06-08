@@ -166,16 +166,9 @@
 
 .googleWrap > div {
   width: 100%;
-  display: flex;
-  justify-content: center;
 }
 
 .googleWrap > div > div {
-  width: 100%;
-}
-
-.googleWrap button {
-  justify-content: center !important;
   width: 100%;
 }
 
