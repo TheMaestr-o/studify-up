@@ -22,6 +22,6 @@
 .tile:hover:not(:disabled):not(.matched) { border-color: var(--accent); background: rgba(66,85,255,0.1); }
 .sel { border-color: var(--accent) !important; background: rgba(66,85,255,0.2) !important; }
 .matched { visibility: hidden; pointer-events: none; opacity: 0; transform: scale(0.85); transition: opacity 0.25s ease, transform 0.25s ease; }
-.gone { display: none; }
+.gone { visibility: hidden; opacity: 0; pointer-events: none; }
 .wrong { border-color: var(--learned) !important; background: rgba(255,153,0,0.1) !important; animation: shake 0.4s ease; }
 @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
